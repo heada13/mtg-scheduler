@@ -1,0 +1,58 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  event_name  String
+  event_day   DateTime
+  event_store Int
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  delete_flag Int
+  updated_at  DateTime @default(now()) @db.DateTime(0)
+}
+
+model Member {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  pass        String
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0)
+  delete_flag Int
+}
+
+model MemberList {
+  id          Int      @id @default(autoincrement())
+  event_id    Int
+  member_id   Int
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0)
+  delete_flag Int
+}
+
+model SnsInfo {
+  id          Int      @id @default(autoincrement())
+  member_id   Int
+  sns_link    String
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0)
+  delete_flag Int
+}
+
+model Store {
+  id          Int      @id @default(autoincrement())
+  store_name  String
+  prefecture  String
+  address     String
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0)
+  delete_flag Int
+}
