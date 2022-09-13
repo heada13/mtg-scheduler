@@ -2,8 +2,19 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { useEffect } from 'react'
 
 const Home: NextPage = () => {
+  const getUsers = async () => {
+    const response = await fetch('/api/authors')
+    console.log('response',response)
+    const users = await response.json()
+    console.log(users)
+    // setUsers(users)
+  }
+  useEffect(() => {
+    getUsers()
+  }, []);
   return (
     <div className={styles.container}>
       <Head>
