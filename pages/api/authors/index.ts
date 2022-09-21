@@ -9,7 +9,18 @@ export default async function handler(
   res: NextApiResponse<Event[]>,
   // res: NextApiResponse,
 ) {
-  const authors = await prisma.event.findMany();
+  // const query = req.query;
+  // const { first, last } = query;
+  const authors = await prisma.event.findMany(
+    // {
+    //   where: {
+    //     created_at: {
+    //       gte: first,
+    //       lt:  last
+    //     }
+    //   }
+    // }
+  );
   console.log('author',authors)
   res.status(200).json(authors);
 }
