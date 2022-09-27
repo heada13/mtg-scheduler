@@ -13,7 +13,7 @@ import addMonths from 'date-fns/addMonths'  // 追加
 import subMonths from 'date-fns/subMonths'  // 追加
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
-import { Event } from '@prisma/client';
+// import { parseISO } from 'date-fns'
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -25,13 +25,41 @@ const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   )
 }
 
+const offsetDate = (date:Date) => {
+  const argOffset = date.setHours(date.getHours() + 9)
+  const offsetDate = new Date(argOffset)
+  const isoDate = offsetDate.toISOString()
+  return isoDate
+}
 
 const Home: NextPage = () => {
-  const [event, setEvent] = useState([])
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(new Date))
   const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(new Date))
+  let calendar = getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth)
+  const addMonthsCalendar = async () => {
+    setFirstDay(current => addMonths(current,1) )
+    setlastDay(current => addMonths(current,1) )
+    await getUsers()
+    calendar = getCalendarArray(firstDayOfTheMonth,lastDayOfTheMonth)
+  }
+  const subMonthsCalendar = async () => {
+    setFirstDay(current => subMonths(current,1) )
+    setlastDay(current => subMonths(current,1) )
+    await getUsers()
+    calendar = getCalendarArray(firstDayOfTheMonth,lastDayOfTheMonth)
+  }
+  const currnetMonthsCalendar = async () => {
+    setFirstDay(startOfMonth(new Date))
+    setlastDay(endOfMonth(new Date))
+    await getUsers()
+    calendar = getCalendarArray(firstDayOfTheMonth,lastDayOfTheMonth)
+  }
+  const [event, setEvent] = useState([])
   const getUsers =  async () => {
-    const response = await fetch(`/api/authors?first=${firstDayOfTheMonth.toISOString()}&last=${lastDayOfTheMonth.toISOString()}`)
+    const firstDate = offsetDate(firstDayOfTheMonth)
+    const lastDate = offsetDate(lastDayOfTheMonth)
+    // const response = await fetch(`/api/authors?first=${firstDayOfTheMonth.toISOString()}&last=${lastDayOfTheMonth.toISOString()}`)
+    const response = await fetch(`/api/authors?first=${firstDate}&last=${lastDate}`)
     const users = await response.json()
     setEvent(users)
     console.log("event",event)
@@ -39,15 +67,14 @@ const Home: NextPage = () => {
   useEffect(() => {
     getUsers()
   },[]);
-  const [targetDate, setTargetDate] = useState(new Date())  // 変更
-  const calendar = getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth)
+  // const [targetDate, setTargetDate] = useState(new Date())  // 変更
   return (
     <>
       <div>
         <div>
-          <button onClick={() => setTargetDate(current => subMonths(current, 1))}>前の月</button>
-          <button onClick={() => setTargetDate(new Date())}>今月</button>
-          <button onClick={() => setTargetDate(current => addMonths(current, 1))}>次の月</button>
+          <button onClick={() => subMonthsCalendar()}>前の月</button>
+          <button onClick={() => currnetMonthsCalendar()}>今月</button>
+          <button onClick={() => addMonthsCalendar()}>次の月</button>
         </div>
         <table>
           <thead>
