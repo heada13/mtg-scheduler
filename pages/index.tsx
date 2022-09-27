@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 // import Head from 'next/head'
 // import Image from 'next/image'
 import styles from '../styles/Home.module.scss'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import format from 'date-fns/format'
 import getDate from 'date-fns/getDate'
 import getDay from 'date-fns/getDay'
@@ -13,6 +13,7 @@ import addMonths from 'date-fns/addMonths'  // 追加
 import subMonths from 'date-fns/subMonths'  // 追加
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
+import { Event } from '@prisma/client';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -26,19 +27,18 @@ const getCalendarArray = (firstDate: Date, lastDate: Date) => {
 
 
 const Home: NextPage = () => {
+  const [event, setEvent] = useState([])
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(new Date))
   const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(new Date))
-  const getUsers = async () => {
-    // const response = await fetch(`/api/authors?first=${firstDayOfTheMonth}&last=${lastDayOfTheMonth}`)
-    const response = await fetch(`/api/authors`)
-    console.log('response',response)
-    const users = response.json()
-    console.log(users)
-    // setUsers(users)
+  const getUsers =  async () => {
+    const response = await fetch(`/api/authors?first=${firstDayOfTheMonth.toISOString()}&last=${lastDayOfTheMonth.toISOString()}`)
+    const users = await response.json()
+    setEvent(users)
+    console.log("event",event)
   }
   useEffect(() => {
     getUsers()
-  }, []);
+  },[]);
   const [targetDate, setTargetDate] = useState(new Date())  // 変更
   const calendar = getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth)
   return (
