@@ -2,7 +2,29 @@
 //   width: 900px;
 // }
 
-.calendar_cell {
+// .weekday_cell, .calendar{
+//   border: none;
+// }
+
+.calendar_container{
+  border-collapse:collapse
+}
+
+.calendar_container tbody tr td{
+  border: 1px rgb(202, 202, 202) solid;
+}
+
+.cell {
   width: 100px;
   height: 100px;
+  vertical-align: top;
+  text-align: center;
+}
+
+.sunday_cell {
+  background-color: rgb(251, 175, 230);
+}
+
+.saturday_cell {
+  background-color: rgb(175, 204, 251);
 }

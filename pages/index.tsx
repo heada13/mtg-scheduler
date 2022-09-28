@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 // import Head from 'next/head'
 // import Image from 'next/image'
 import styles from '../styles/Home.module.scss'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import format from 'date-fns/format'
 import getDate from 'date-fns/getDate'
 import getDay from 'date-fns/getDay'
@@ -58,7 +58,6 @@ const Home: NextPage = () => {
   const getUsers =  async () => {
     const firstDate = offsetDate(firstDayOfTheMonth)
     const lastDate = offsetDate(lastDayOfTheMonth)
-    // const response = await fetch(`/api/authors?first=${firstDayOfTheMonth.toISOString()}&last=${lastDayOfTheMonth.toISOString()}`)
     const response = await fetch(`/api/authors?first=${firstDate}&last=${lastDate}`)
     const users = await response.json()
     setEvent(users)
@@ -67,7 +66,6 @@ const Home: NextPage = () => {
   useEffect(() => {
     getUsers()
   },[]);
-  // const [targetDate, setTargetDate] = useState(new Date())  // 変更
   return (
     <>
       <div>
@@ -76,7 +74,8 @@ const Home: NextPage = () => {
           <button onClick={() => currnetMonthsCalendar()}>今月</button>
           <button onClick={() => addMonthsCalendar()}>次の月</button>
         </div>
-        <table>
+        {format(firstDayOfTheMonth, 'y年M月')}
+        <table className={styles.calendar_container}>
           <thead>
             <tr>
               <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
@@ -86,7 +85,10 @@ const Home: NextPage = () => {
             {calendar.map((weekRow, rowNum) => (
               <tr key={rowNum}>
                 {weekRow.map(date => (
-                  <td key={getDay(date)} className={styles.calendar_cell}>{getDate(date)}</td>
+                  <td key={getDay(date)} className={getDay(date) === 0 ? 
+                    `${styles.sunday_cell} ${styles.cell}` : 
+                    getDay(date) === 6 ? `${styles.saturday_cell} ${styles.cell}` : 
+                    styles.cell } >{getDate(date)}</td>
                 ))}
               </tr>
             ))}
