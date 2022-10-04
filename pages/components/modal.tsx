@@ -1,4 +1,5 @@
 import styles from '../../styles/Home.module.scss'
+import EventRegist from './eventRegist'
 
 type Props = {
   show: boolean,
@@ -11,7 +12,7 @@ export default function modal ({show, setShow}:Props) {
       <>
         <div className={styles.overlay}>
           <div>
-            <p>content</p>
+            <EventRegist/>
             <button onClick={() => setShow(false)}>閉じる</button>
           </div>
         </div>

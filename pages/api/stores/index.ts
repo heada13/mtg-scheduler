@@ -1,4 +1,4 @@
-import { Event, Store } from '@prisma/client';
+import { Store } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { PrismaClient } from '@prisma/client';
