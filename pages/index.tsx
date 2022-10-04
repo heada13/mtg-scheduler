@@ -13,6 +13,7 @@ import addMonths from 'date-fns/addMonths'  // 追加
 import subMonths from 'date-fns/subMonths'  // 追加
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
+import Modal from './components/modal'
 // import { parseISO } from 'date-fns'
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
@@ -35,6 +36,8 @@ const offsetDate = (date:Date) => {
 const Home: NextPage = () => {
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(new Date))
   const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(new Date))
+  const [event, setEvent] = useState([])
+  const [show, setShow] = useState(false)
   let calendar = getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth)
   const addMonthsCalendar = async () => {
     setFirstDay(current => addMonths(current,1) )
@@ -54,13 +57,13 @@ const Home: NextPage = () => {
     await getUsers()
     calendar = getCalendarArray(firstDayOfTheMonth,lastDayOfTheMonth)
   }
-  const [event, setEvent] = useState([])
+  // 表示月のイベント全て取得
   const getUsers =  async () => {
     const firstDate = offsetDate(firstDayOfTheMonth)
     const lastDate = offsetDate(lastDayOfTheMonth)
-    const response = await fetch(`/api/authors?first=${firstDate}&last=${lastDate}`)
-    const users = await response.json()
-    setEvent(users)
+    const response = await fetch(`/api/events?first=${firstDate}&last=${lastDate}`)
+    const events = await response.json()
+    setEvent(events)
     console.log("event",event)
   }
   useEffect(() => {
@@ -69,10 +72,15 @@ const Home: NextPage = () => {
   return (
     <>
       <div>
-        <div>
-          <button onClick={() => subMonthsCalendar()}>前の月</button>
-          <button onClick={() => currnetMonthsCalendar()}>今月</button>
-          <button onClick={() => addMonthsCalendar()}>次の月</button>
+        <div className={styles.calendar_menu}>
+          <div>
+            <button onClick={() => subMonthsCalendar()}>前の月</button>
+            <button onClick={() => currnetMonthsCalendar()}>今月</button>
+            <button onClick={() => addMonthsCalendar()}>次の月</button>
+          </div>
+          <div>
+            <button onClick={() => setShow(true)}>新規作成</button>
+          </div>
         </div>
         {format(firstDayOfTheMonth, 'y年M月')}
         <table className={styles.calendar_container}>
@@ -94,6 +102,7 @@ const Home: NextPage = () => {
             ))}
           </tbody>
         </table>
+        <Modal show={show} setShow={setShow}/>
       </div>
     </>
   )

@@ -17,7 +17,7 @@ export default async function handler(
   const query= req.query;
   const {first, last} = query
   console.log("query",query)
-  const authors = await prisma.event.findMany(
+  const events = await prisma.event.findMany(
     {
       where: {
         event_day: {
@@ -27,6 +27,6 @@ export default async function handler(
       }
     }
   );
-  console.log('author',authors)
-  res.status(200).json(authors);
+  console.log('events',events)
+  res.status(200).json(events);
 }
