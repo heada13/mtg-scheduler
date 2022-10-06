@@ -11,7 +11,7 @@ export default function modal ({show, setShow}:Props) {
     return (
       <>
         <div className={styles.overlay}>
-          <div>
+          <div className={styles.modal_container}>
             <EventRegist/>
             <button onClick={() => setShow(false)}>閉じる</button>
           </div>

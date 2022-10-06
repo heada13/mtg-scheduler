@@ -49,3 +49,15 @@
   justify-content: center;
 
 }
+
+.modal_container {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background-color: white;
+  border-radius: 5px;
+}
+
+.regist_content {
+  margin-bottom: 10px;
+}
