@@ -15,7 +15,7 @@ export default async function handler(
         event_name: postData.eventName,
         event_day: postData.eventDay,
         event_store: postData.store,
-        delete_flag: 0
+        event_format: 1
       }
     }
   );

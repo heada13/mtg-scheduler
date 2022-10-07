@@ -83,7 +83,7 @@ export default function EventRegistModal ({show, setShow}:Props) {
                   ))}
               </Select>
             </div>
-            <div>
+            <div className={styles.button_container}>
               <Button variant='outlined' onClick={() => setShow(false)}>キャンセル</Button>
               <Button variant="contained" onClick={eventPost}>登録</Button>
             </div>

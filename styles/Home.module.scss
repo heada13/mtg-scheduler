@@ -61,3 +61,9 @@
 .regist_content {
   margin-bottom: 20px;
 }
+
+.button_container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
