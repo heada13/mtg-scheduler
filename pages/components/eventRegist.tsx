@@ -7,6 +7,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
 
 export default function EventRegist () {
   const [stores, setStores] = useState<Store[]>([])
@@ -32,6 +33,7 @@ export default function EventRegist () {
   },[])
   return (
     <>
+      <div className={styles.regist_content}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <MobileDateTimePicker
             value={date}
@@ -42,20 +44,26 @@ export default function EventRegist () {
             renderInput={(params) => <TextField {...params} />}
             />
         </LocalizationProvider>
+      </div>
+      <div className={styles.regist_content}>
         <TextField
           id="outlined-name"
-          label="Name"
+          label="イベント名"
           value={eventName}
           onChange={handleChange}
-        />     
+          />     
+      </div>
+      <div className={styles.regist_content}>
+        <InputLabel>開催店舗</InputLabel>
         <Select
           value={store}
-          // label="Age"
+          label="開催店舗"
           onChange={handleChangeStore}>
           {stores.map((store) => (
             <MenuItem value={store.id} key={store.id}>{store.store_name}</MenuItem>
             ))}
         </Select>
+      </div>
     </>
   )
 }
