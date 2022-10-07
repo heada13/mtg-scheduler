@@ -8,6 +8,7 @@ import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
+import Button from '@mui/material/Button';
 
 export default function EventRegist () {
   const [stores, setStores] = useState<Store[]>([])
@@ -20,14 +21,24 @@ export default function EventRegist () {
     setStores(stores)
   }
   const handleChange = (e:any) => {
-    setEventName(e.taxrget.value)
+    setEventName(e.target.value)
   }
   const handleChangeStore = (e:SelectChangeEvent) => {
     setStore(e.target.value)
   }
-  // const changeDateHandler = (date: Date|null):void => {
-  //   setDate(date)
-  // }
+  const eventPost = async () => {
+    await fetch('/api/eventPost', {
+      method: "POST",
+      body: JSON.stringify({
+        store: store,
+        eventName: eventName,
+        eventDay: date
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+  }
   useEffect(() => {
     getStores()
   },[])
@@ -64,6 +75,7 @@ export default function EventRegist () {
             ))}
         </Select>
       </div>
+      <Button variant="contained" onClick={eventPost}>登録</Button>
     </>
   )
 }
