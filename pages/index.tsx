@@ -13,7 +13,8 @@ import addMonths from 'date-fns/addMonths'  // 追加
 import subMonths from 'date-fns/subMonths'  // 追加
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
-import Modal from './components/modal'
+// import Modal from './components/modal'
+import EventRegistModal from './components/eventRegistModal'
 // import { parseISO } from 'date-fns'
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
@@ -102,7 +103,7 @@ const Home: NextPage = () => {
             ))}
           </tbody>
         </table>
-        <Modal show={show} setShow={setShow}/>
+        <EventRegistModal show={show} setShow={setShow}/>
       </div>
     </>
   )
