@@ -1,4 +1,4 @@
-import { Event } from '@prisma/client';
+// import { Event } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { PrismaClient } from '@prisma/client';
@@ -15,7 +15,7 @@ export default async function handler(
         event_name: postData.eventName,
         event_day: postData.eventDay,
         event_store: postData.store,
-        event_format: 1
+        event_format: postData.format
       }
     }
   );

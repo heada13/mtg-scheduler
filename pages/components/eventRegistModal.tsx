@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styles from '../../styles/Home.module.scss'
-import { Store } from '@prisma/client';
+import { Store, Format } from '@prisma/client';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -18,6 +18,8 @@ type Props = {
 export default function EventRegistModal ({show, setShow}:Props) {
   const [stores, setStores] = useState<Store[]>([])
   const [store, setStore] = useState("")
+  const [formats, setFormats] = useState<Format[]>([])
+  const [format, setFormat] = useState("")
   const [eventName, setEventName ] = useState<string>()
   const [date, setDate] = useState<Date|null>(new Date())
   const getStores =async () => {
@@ -25,11 +27,19 @@ export default function EventRegistModal ({show, setShow}:Props) {
     const stores = await response.json()
     setStores(stores)
   }
+  const getFormats =async () => {
+    const response = await fetch('/api/formats')
+    const formats = await response.json()
+    setFormats(formats)
+  }
   const handleChange = (e:any) => {
     setEventName(e.target.value)
   }
   const handleChangeStore = (e:SelectChangeEvent) => {
     setStore(e.target.value)
+  }
+  const handleChangeFormat = (e:SelectChangeEvent) => {
+    setFormat(e.target.value)
   }
   const eventPost = async () => {
     await fetch('/api/eventPost', {
@@ -37,7 +47,8 @@ export default function EventRegistModal ({show, setShow}:Props) {
       body: JSON.stringify({
         store: store,
         eventName: eventName,
-        eventDay: date
+        eventDay: date,
+        format: format
       }),
       headers: {
         "Content-Type": "application/json",
@@ -46,6 +57,7 @@ export default function EventRegistModal ({show, setShow}:Props) {
   }
   useEffect(() => {
     getStores()
+    getFormats()
   },[])
   if(show) {
     return (
@@ -80,6 +92,17 @@ export default function EventRegistModal ({show, setShow}:Props) {
                 onChange={handleChangeStore}>
                 {stores.map((store) => (
                   <MenuItem value={store.id} key={store.id}>{store.store_name}</MenuItem>
+                  ))}
+              </Select>
+            </div>
+            <div className={styles.regist_content}>
+              <InputLabel>フォーマット</InputLabel>
+              <Select
+                value={format}
+                label="format"
+                onChange={handleChangeFormat}>
+                {formats.map((format) => (
+                  <MenuItem value={format.id} key={format.id}>{format.format_name}</MenuItem>
                   ))}
               </Select>
             </div>
