@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import styles from '../../styles/Home.module.scss'
 import { Store, Format } from '@prisma/client';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -9,6 +9,9 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 type Props = {
   show: boolean,
@@ -22,6 +25,7 @@ export default function EventRegistModal ({show, setShow}:Props) {
   const [format, setFormat] = useState("")
   const [eventName, setEventName ] = useState<string>()
   const [date, setDate] = useState<Date|null>(new Date())
+  const [open, setOpen] = useState(false);
   const getStores =async () => {
     const response = await fetch('/api/stores')
     const stores = await response.json()
@@ -41,8 +45,30 @@ export default function EventRegistModal ({show, setShow}:Props) {
   const handleChangeFormat = (e:SelectChangeEvent) => {
     setFormat(e.target.value)
   }
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+  const action = (
+    <Fragment>
+      <Button color="secondary" size="small" onClick={handleClose}>
+        UNDO
+      </Button>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </Fragment>
+  );
+
   const eventPost = async () => {
-    await fetch('/api/eventPost', {
+    const post = await fetch('/api/eventPost', {
       method: "POST",
       body: JSON.stringify({
         store: store,
@@ -54,6 +80,11 @@ export default function EventRegistModal ({show, setShow}:Props) {
         "Content-Type": "application/json",
       }
     })
+    console.log("post",post)
+    if(post.status === 200) {
+      // setShow(false)
+      setOpen(true)
+    }
   }
   useEffect(() => {
     getStores()
@@ -110,6 +141,13 @@ export default function EventRegistModal ({show, setShow}:Props) {
               <Button variant='outlined' onClick={() => setShow(false)}>キャンセル</Button>
               <Button variant="contained" onClick={eventPost}>登録</Button>
             </div>
+            <Snackbar
+              open={open}
+              autoHideDuration={5000}
+              onClose={handleClose}
+              message="登録成功"
+              action={action}
+            />
           </div>
         </div>
       </>
