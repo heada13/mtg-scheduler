@@ -19,7 +19,7 @@ type Props = {
 }
 
 type Post = {
-  date: Date|null,
+  date: Date,
   eventName: string|null,
   format: number|null,
   store: number|null
@@ -27,11 +27,7 @@ type Post = {
 
 export default function EventRegistModal ({show, setShow}:Props) {
   const [stores, setStores] = useState<Store[]>([])
-  // const [store, setStore] = useState("")
   const [formats, setFormats] = useState<Format[]>([])
-  // const [format, setFormat] = useState("")
-  // const [eventName, setEventName ] = useState<string>()
-  // const [date, setDate] = useState<Date|null>(new Date())
   const [postData, setPostData] = useState<Post>({
     date: new Date,
     eventName: '',
@@ -50,19 +46,15 @@ export default function EventRegistModal ({show, setShow}:Props) {
     setFormats(formats)
   }
   const handleChange = (e:any) => {
-    // setEventName(e.target.value)
     setPostData((pre) => ({...pre, eventName: e.target.value}))
   }
   const handleChangeStore = (e:any) => {
-    // setStore(e.target.value)
     setPostData((pre) => ({...pre, store: e.target.value}))
   }
   const handleChangeFormat = (e:any) => {
-    // setFormat(e.target.value)
     setPostData((pre) => ({...pre, format: e.target.value}))
   }
   const handleChangeDate = (e:any) => {
-    // setFormat(e.target.value)
     setPostData((pre) => ({...pre, date: e}))
   }
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
@@ -71,6 +63,11 @@ export default function EventRegistModal ({show, setShow}:Props) {
     }
     setOpen(false);
   };
+  const offsetDate = (date:Date) => {
+    const argOffset = date?.setHours(date?.getHours() + 9)
+    const offset = new Date(argOffset)
+    return offset
+  }
   const action = (
     <Fragment>
       <Button color="secondary" size="small" onClick={handleClose}>
@@ -88,6 +85,8 @@ export default function EventRegistModal ({show, setShow}:Props) {
   );
 
   const eventPost = async () => {
+    const offset = offsetDate(postData.date)
+    setPostData((pre) => ({...pre, date: offset}))
     const post = await fetch('/api/eventPost', {
       method: "POST",
       body: JSON.stringify(postData),
