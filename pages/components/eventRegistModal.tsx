@@ -18,13 +18,26 @@ type Props = {
   setShow: (value: boolean |((prevVar: boolean) => boolean)) => void;
 }
 
+type Post = {
+  date: Date|null,
+  eventName: string|null,
+  format: number|null,
+  store: number|null
+}
+
 export default function EventRegistModal ({show, setShow}:Props) {
   const [stores, setStores] = useState<Store[]>([])
-  const [store, setStore] = useState("")
+  // const [store, setStore] = useState("")
   const [formats, setFormats] = useState<Format[]>([])
-  const [format, setFormat] = useState("")
-  const [eventName, setEventName ] = useState<string>()
-  const [date, setDate] = useState<Date|null>(new Date())
+  // const [format, setFormat] = useState("")
+  // const [eventName, setEventName ] = useState<string>()
+  // const [date, setDate] = useState<Date|null>(new Date())
+  const [postData, setPostData] = useState<Post>({
+    date: new Date,
+    eventName: '',
+    format: null,
+    store: null
+  })
   const [open, setOpen] = useState(false);
   const getStores =async () => {
     const response = await fetch('/api/stores')
@@ -37,13 +50,20 @@ export default function EventRegistModal ({show, setShow}:Props) {
     setFormats(formats)
   }
   const handleChange = (e:any) => {
-    setEventName(e.target.value)
+    // setEventName(e.target.value)
+    setPostData((pre) => ({...pre, eventName: e.target.value}))
   }
-  const handleChangeStore = (e:SelectChangeEvent) => {
-    setStore(e.target.value)
+  const handleChangeStore = (e:any) => {
+    // setStore(e.target.value)
+    setPostData((pre) => ({...pre, store: e.target.value}))
   }
-  const handleChangeFormat = (e:SelectChangeEvent) => {
-    setFormat(e.target.value)
+  const handleChangeFormat = (e:any) => {
+    // setFormat(e.target.value)
+    setPostData((pre) => ({...pre, format: e.target.value}))
+  }
+  const handleChangeDate = (e:any) => {
+    // setFormat(e.target.value)
+    setPostData((pre) => ({...pre, date: e}))
   }
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {
@@ -70,17 +90,11 @@ export default function EventRegistModal ({show, setShow}:Props) {
   const eventPost = async () => {
     const post = await fetch('/api/eventPost', {
       method: "POST",
-      body: JSON.stringify({
-        store: store,
-        eventName: eventName,
-        eventDay: date,
-        format: format
-      }),
+      body: JSON.stringify(postData),
       headers: {
         "Content-Type": "application/json",
       }
     })
-    console.log("post",post)
     if(post.status === 200) {
       // setShow(false)
       setOpen(true)
@@ -98,10 +112,8 @@ export default function EventRegistModal ({show, setShow}:Props) {
             <div className={styles.regist_content}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <MobileDateTimePicker
-                  value={date}
-                  onChange={(newValue) => {
-                    setDate(newValue);
-                  }}
+                  value={postData.date}
+                  onChange={handleChangeDate}
                   onError={console.log}
                   renderInput={(params) => <TextField {...params} />}
                   />
@@ -111,14 +123,14 @@ export default function EventRegistModal ({show, setShow}:Props) {
               <TextField
                 id="outlined-name"
                 label="イベント名"
-                value={eventName}
+                value={postData.eventName}
                 onChange={handleChange}
                 />     
             </div>
             <div className={styles.regist_content}>
               <InputLabel>開催店舗</InputLabel>
               <Select
-                value={store}
+                value={postData.store}
                 label="開催店舗"
                 onChange={handleChangeStore}>
                 {stores.map((store) => (
@@ -129,7 +141,7 @@ export default function EventRegistModal ({show, setShow}:Props) {
             <div className={styles.regist_content}>
               <InputLabel>フォーマット</InputLabel>
               <Select
-                value={format}
+                value={postData.format}
                 label="format"
                 onChange={handleChangeFormat}>
                 {formats.map((format) => (

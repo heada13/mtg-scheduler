@@ -13,7 +13,7 @@ export default async function handler(
   const eventPost = await prisma.event.create({
     data: {
         event_name: postData.eventName,
-        event_day: postData.eventDay,
+        event_day: postData.date,
         event_store: postData.store,
         event_format: postData.format
       }
