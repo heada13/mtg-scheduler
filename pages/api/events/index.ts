@@ -24,6 +24,13 @@ export default async function handler(
           gte: first as unknown as Date,
           lt:  last as unknown as Date
         }
+      },
+      include: {
+        stores: {select: {store_name:true}},
+        formats: {select: {
+          id: true,
+          format_name: true
+        }}
       }
     }
   );
