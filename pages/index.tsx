@@ -1,6 +1,8 @@
 import type { NextPage } from 'next'
+import { Event } from '@prisma/client';
 // import Head from 'next/head'
 // import Image from 'next/image'
+import getMonth from 'date-fns/getMonth'
 import styles from '../styles/Home.module.scss'
 import { useEffect, useState } from 'react'
 import format from 'date-fns/format'
@@ -37,9 +39,11 @@ const offsetDate = (date:Date) => {
 const Home: NextPage = () => {
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(new Date))
   const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(new Date))
-  const [event, setEvent] = useState([])
+  // const [event, setEvent] = useState([])
+  const [eventByDay, setEventByDay] = useState<Event[][]>([[]])
   const [show, setShow] = useState(false)
   let calendar = getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth)
+  console.log("calne",calendar)
   const addMonthsCalendar = async () => {
     setFirstDay(current => addMonths(current,1) )
     setlastDay(current => addMonths(current,1) )
@@ -58,14 +62,29 @@ const Home: NextPage = () => {
     await getUsers()
     calendar = getCalendarArray(firstDayOfTheMonth,lastDayOfTheMonth)
   }
+  const eventByDateList = (events:Event[]) => {
+    // 31日分の空のデータを生成
+    const listByDate = new Array(31)
+    // 初期値に空のリストを格納
+    for(let i = 0; i < listByDate.length; i++){
+      listByDate[i] = []
+    }
+    events.forEach((el:Event) => {
+      const eventDate = getDate(new Date(el.event_day))
+      console.log("day",eventDate)
+      listByDate[eventDate].push(el)
+    })
+    console.log("event",listByDate)
+    setEventByDay(listByDate)
+  }
   // 表示月のイベント全て取得
   const getUsers =  async () => {
     const firstDate = offsetDate(firstDayOfTheMonth)
     const lastDate = offsetDate(lastDayOfTheMonth)
     const response = await fetch(`/api/events?first=${firstDate}&last=${lastDate}`)
     const events = await response.json()
-    setEvent(events)
-    console.log("event",event)
+    // setEvent(events)
+    eventByDateList(events)
   }
   useEffect(() => {
     getUsers()
@@ -97,7 +116,15 @@ const Home: NextPage = () => {
                   <td key={getDay(date)} className={getDay(date) === 0 ? 
                     `${styles.sunday_cell} ${styles.cell}` : 
                     getDay(date) === 6 ? `${styles.saturday_cell} ${styles.cell}` : 
-                    styles.cell } >{getDate(date)}</td>
+                    styles.cell } >
+                    {getDate(date)}
+                    {eventByDay[getDate(date)]?.map(event => (
+                      // if(getMonth(date) === getMonth(event.event_day)){
+                        getMonth(date) === getMonth(new Date(event.event_day)) &&
+                        (<div key={event.id}>{event.event_name}</div>)
+                      // }
+                    ))}
+                    </td>
                 ))}
               </tr>
             ))}
