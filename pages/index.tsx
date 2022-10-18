@@ -1,7 +1,5 @@
 import type { NextPage } from 'next'
 import { Event } from '@prisma/client';
-// import Head from 'next/head'
-// import Image from 'next/image'
 import getMonth from 'date-fns/getMonth'
 import styles from '../styles/Home.module.scss'
 import { useEffect, useState } from 'react'
@@ -11,13 +9,11 @@ import getDay from 'date-fns/getDay'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import endOfWeek from 'date-fns/endOfWeek'
 import eachWeekOfInterval from 'date-fns/eachWeekOfInterval'
-import addMonths from 'date-fns/addMonths'  // 追加
-import subMonths from 'date-fns/subMonths'  // 追加
+import addMonths from 'date-fns/addMonths'
+import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
-// import Modal from './components/modal'
 import EventRegistModal from './components/eventRegistModal'
-// import { parseISO } from 'date-fns'
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -29,38 +25,51 @@ const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   )
 }
 
-const offsetDate = (date:Date) => {
-  const argOffset = date.setHours(date.getHours() + 9)
-  const offsetDate = new Date(argOffset)
-  const isoDate = offsetDate.toISOString()
+const formatDate = (date:Date) => {
+  // const argOffset = date.setHours(date.getHours() + 9)
+  // const offsetDate = new Date(argOffset)
+  const isoDate = date.toISOString()
   return isoDate
 }
 
+const offsetTime = () => {
+  const now = new Date(Date.now() + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000))
+  return now
+}
+
 const Home: NextPage = () => {
-  const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(new Date))
-  const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(new Date))
-  // const [event, setEvent] = useState([])
+  // const now = new Date(Date.now() + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000))
+  const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(offsetTime()))
+  const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(offsetTime()))
   const [eventByDay, setEventByDay] = useState<Event[][]>([[]])
   const [show, setShow] = useState(false)
-  let calendar = getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth)
-  console.log("calne",calendar)
+  const [calendar, setCalendar] = useState(getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth))
   const addMonthsCalendar = async () => {
-    setFirstDay(current => addMonths(current,1) )
-    setlastDay(current => addMonths(current,1) )
-    await getUsers()
-    calendar = getCalendarArray(firstDayOfTheMonth,lastDayOfTheMonth)
+    const addMonthFirstDay = addMonths(firstDayOfTheMonth,1)
+    setFirstDay(addMonthFirstDay)
+    const addMonthLastDay = addMonths(lastDayOfTheMonth,1)
+    setlastDay(addMonthLastDay)
+    const addMonthCalendar = getCalendarArray(addMonthFirstDay,addMonthLastDay)
+    setCalendar(addMonthCalendar)
+    await getUsers(addMonthFirstDay,addMonthLastDay)
   }
   const subMonthsCalendar = async () => {
-    setFirstDay(current => subMonths(current,1) )
-    setlastDay(current => subMonths(current,1) )
-    await getUsers()
-    calendar = getCalendarArray(firstDayOfTheMonth,lastDayOfTheMonth)
+    const subMonthFirstDay = subMonths(firstDayOfTheMonth,1)
+    setFirstDay(subMonthFirstDay)
+    const subMonthLastDay = subMonths(lastDayOfTheMonth,1)
+    setlastDay(subMonthLastDay)
+    const subMonthCalendar = getCalendarArray(subMonthFirstDay,subMonthLastDay)
+    setCalendar(subMonthCalendar)
+    await getUsers(subMonthFirstDay, subMonthLastDay)
   }
   const currnetMonthsCalendar = async () => {
-    setFirstDay(startOfMonth(new Date))
-    setlastDay(endOfMonth(new Date))
-    await getUsers()
-    calendar = getCalendarArray(firstDayOfTheMonth,lastDayOfTheMonth)
+    const currentMonthFirstDay = startOfMonth(offsetTime())
+    setFirstDay(currentMonthFirstDay)
+    const currentMonthLastDay = endOfMonth(offsetTime())
+    setlastDay(currentMonthLastDay)
+    const nowCalendar = getCalendarArray(currentMonthFirstDay,currentMonthLastDay)
+    setCalendar(nowCalendar)
+    await getUsers(currentMonthFirstDay, currentMonthLastDay)
   }
   const eventByDateList = (events:Event[]) => {
     // 31日分の空のデータを生成
@@ -71,23 +80,20 @@ const Home: NextPage = () => {
     }
     events.forEach((el:Event) => {
       const eventDate = getDate(new Date(el.event_day))
-      console.log("day",eventDate)
       listByDate[eventDate].push(el)
     })
-    console.log("event",listByDate)
     setEventByDay(listByDate)
   }
   // 表示月のイベント全て取得
-  const getUsers =  async () => {
-    const firstDate = offsetDate(firstDayOfTheMonth)
-    const lastDate = offsetDate(lastDayOfTheMonth)
-    const response = await fetch(`/api/events?first=${firstDate}&last=${lastDate}`)
+  const getUsers =  async (firstDate:Date,lastDate:Date ) => {
+    const formatfirstDate = formatDate(firstDate)
+    const formatlastDate = formatDate(lastDate)
+    const response = await fetch(`/api/events?first=${formatfirstDate}&last=${formatlastDate}`)
     const events = await response.json()
-    // setEvent(events)
     eventByDateList(events)
   }
   useEffect(() => {
-    getUsers()
+    getUsers(startOfMonth(offsetTime()), endOfMonth(offsetTime()))
   },[]);
   return (
     <>
@@ -119,10 +125,8 @@ const Home: NextPage = () => {
                     styles.cell } >
                     {getDate(date)}
                     {eventByDay[getDate(date)]?.map(event => (
-                      // if(getMonth(date) === getMonth(event.event_day)){
-                        getMonth(date) === getMonth(new Date(event.event_day)) &&
-                        (<div key={event.id}>{event.event_name}</div>)
-                      // }
+                      getMonth(date) === getMonth(new Date(event.event_day)) &&
+                      (<div key={event.id}>{event.event_name}</div>)
                     ))}
                     </td>
                 ))}
