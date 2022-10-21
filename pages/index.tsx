@@ -114,6 +114,9 @@ const Home: NextPage = () => {
         <Button>
           <Link href="/signup">sign up</Link>
         </Button>
+        <Button>
+          <Link href="/login">login</Link>
+        </Button>
         <table className={styles.calendar_container}>
           <thead>
             <tr>
