@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Link from 'next/link'
 import { Event } from '@prisma/client';
 import getMonth from 'date-fns/getMonth'
 import styles from '../styles/Home.module.scss'
@@ -13,7 +14,8 @@ import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
-import EventRegistModal from './components/eventRegistModal'
+import EventRegistModal from '../components/eventRegistModal'
+import Button from '@mui/material/Button';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -100,15 +102,18 @@ const Home: NextPage = () => {
       <div>
         <div className={styles.calendar_menu}>
           <div>
-            <button onClick={() => subMonthsCalendar()}>前の月</button>
-            <button onClick={() => currnetMonthsCalendar()}>今月</button>
-            <button onClick={() => addMonthsCalendar()}>次の月</button>
+            <Button onClick={() => subMonthsCalendar() } variant="contained">前の月</Button>
+            <Button onClick={() => currnetMonthsCalendar()} variant="contained">今月</Button>
+            <Button onClick={() => addMonthsCalendar()} variant="contained">次の月</Button>
           </div>
           <div>
             <button onClick={() => setShow(true)}>新規作成</button>
           </div>
         </div>
         {format(firstDayOfTheMonth, 'y年M月')}
+        <Button>
+          <Link href="/signup">sign up</Link>
+        </Button>
         <table className={styles.calendar_container}>
           <thead>
             <tr>

@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from 'react'
-import styles from '../../styles/Home.module.scss'
+import styles from '../styles/Home.module.scss'
 import { Store, Format } from '@prisma/client';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import TextField from '@mui/material/TextField';
