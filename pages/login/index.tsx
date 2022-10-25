@@ -33,25 +33,6 @@ const Login = () => {
   return (
     <>
       <div className={styles.login_container}>
-        <Snackbar
-          // open={isLoggedIn}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          autoHideDuration={3000}
-          key={"top" + "center"}
-          onClose={handleClose}
-        >
-          <Alert onClose={handleClose} severity="warning">
-            すでにログインしています
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          // open={!isLoggedIn}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          autoHideDuration={3000}
-          key={"top" + "center"}
-        >
-          <Alert severity="warning">ログインしてください</Alert>
-        </Snackbar>
         <h2>ログイン</h2>
         <form onSubmit={handleSubmit}>
           <div>

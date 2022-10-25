@@ -15,7 +15,7 @@ import subMonths from 'date-fns/subMonths'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
 import EventRegistModal from '../components/eventRegistModal'
-import Button from '@mui/material/Button';
+import Button from '@mui/material/Button'
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
