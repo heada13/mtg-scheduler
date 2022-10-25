@@ -16,6 +16,10 @@ import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
 import EventRegistModal from '../components/eventRegistModal'
 import Button from '@mui/material/Button'
+import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { useAuthContext } from '../lib/authContext';
+import { AccountCircle } from '@mui/icons-material';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -40,12 +44,15 @@ const offsetTime = () => {
 }
 
 const Home: NextPage = () => {
+  const auth = useAuthContext()
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   // const now = new Date(Date.now() + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000))
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(offsetTime()))
   const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(offsetTime()))
   const [eventByDay, setEventByDay] = useState<Event[][]>([[]])
   const [show, setShow] = useState(false)
   const [calendar, setCalendar] = useState(getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth))
+  const [open, setOpen] = useState<boolean>(false)
   const addMonthsCalendar = async () => {
     const addMonthFirstDay = addMonths(firstDayOfTheMonth,1)
     setFirstDay(addMonthFirstDay)
@@ -73,6 +80,15 @@ const Home: NextPage = () => {
     setCalendar(nowCalendar)
     await getUsers(currentMonthFirstDay, currentMonthLastDay)
   }
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const eventByDateList = (events:Event[]) => {
     // 31日分の空のデータを生成
     const listByDate = new Array(31)
@@ -99,51 +115,92 @@ const Home: NextPage = () => {
   },[]);
   return (
     <>
-      <div>
-        <div className={styles.calendar_menu}>
-          <div>
-            <Button onClick={() => subMonthsCalendar() } variant="contained">前の月</Button>
-            <Button onClick={() => currnetMonthsCalendar()} variant="contained">今月</Button>
-            <Button onClick={() => addMonthsCalendar()} variant="contained">次の月</Button>
-          </div>
-          <div>
-            <button onClick={() => setShow(true)}>新規作成</button>
-          </div>
-        </div>
-        {format(firstDayOfTheMonth, 'y年M月')}
-        <Button>
-          <Link href="/signup">sign up</Link>
-        </Button>
-        <Button>
-          <Link href="/login">login</Link>
-        </Button>
-        <table className={styles.calendar_container}>
-          <thead>
-            <tr>
-              <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
-            </tr>
-          </thead>
-          <tbody>
-            {calendar.map((weekRow, rowNum) => (
-              <tr key={rowNum}>
-                {weekRow.map(date => (
-                  <td key={getDay(date)} className={getDay(date) === 0 ? 
-                    `${styles.sunday_cell} ${styles.cell}` : 
-                    getDay(date) === 6 ? `${styles.saturday_cell} ${styles.cell}` : 
-                    styles.cell } >
-                    {getDate(date)}
-                    {eventByDay[getDate(date)]?.map(event => (
-                      getMonth(date) === getMonth(new Date(event.event_day)) &&
-                      (<div key={event.id}>{event.event_name}</div>)
-                    ))}
-                    </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
         <EventRegistModal show={show} setShow={setShow}/>
-      </div>
+        <AppBar position="fixed" >
+          <Toolbar>
+            <Typography variant="h6" noWrap sx={{ flexGrow: 1 }} component="div">
+              MTG-scheduler
+            </Typography>
+            {auth && (
+              <div>
+                <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem>Profile</MenuItem>
+                <MenuItem>My account</MenuItem>
+              </Menu>
+              </div>
+            )}
+          </Toolbar>
+        </AppBar>
+        <main className={styles.main}>
+          <div className={styles.calendar_main}>
+            {format(firstDayOfTheMonth, 'y年M月')}
+            <table className={styles.calendar_container}>
+              <thead>
+                <tr>
+                  <th>日</th><th>月</th><th>火</th><th>水</th><th>木</th><th>金</th><th>土</th>
+                </tr>
+              </thead>
+              <tbody>
+                {calendar.map((weekRow, rowNum) => (
+                  <tr key={rowNum}>
+                    {weekRow.map(date => (
+                      <td key={getDay(date)} className={getDay(date) === 0 ? 
+                        `${styles.sunday_cell} ${styles.cell}` : 
+                        getDay(date) === 6 ? `${styles.saturday_cell} ${styles.cell}` : 
+                        styles.cell } >
+                        {getDate(date)}
+                        {eventByDay[getDate(date)]?.map(event => (
+                          getMonth(date) === getMonth(new Date(event.event_day)) &&
+                          (<div key={event.id}>{event.event_name}</div>)
+                          ))}
+                        </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className={styles.calendar_menu}>
+            <div>
+              <Button onClick={() => subMonthsCalendar() } variant="contained">前の月</Button>
+              <Button onClick={() => currnetMonthsCalendar()} variant="contained">今月</Button>
+              <Button onClick={() => addMonthsCalendar()} variant="contained">次の月</Button>
+            </div>
+            <div>
+              <button onClick={() => setShow(true)}>新規作成</button>
+            </div>
+            <Button>
+              <Link href="/signup">sign up</Link>
+            </Button>
+            <Button>
+              <Link href="/login">login</Link>
+            </Button>
+          </div>
+        </main>
     </>
   )
 }

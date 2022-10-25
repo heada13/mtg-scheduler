@@ -6,6 +6,16 @@
 //   border: none;
 // }
 
+.main {
+  display: flex;
+  flex-direction: row;
+  margin-top: 100px;
+}
+
+// .calendar_main {
+//   margin-top: 100px;
+// }
+
 .calendar_container{
   border-collapse:collapse
 }
