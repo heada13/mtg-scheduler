@@ -3,7 +3,9 @@ import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from "@mui/ma
 import { useState } from "react";
 import { useAuthContext } from "../lib/authContext";
 import { Logout } from "../components/logout" 
-
+import Link from "next/link";
+import styles from '../styles/Home.module.scss'
+import { style } from "@mui/system";
 
 export const Header = () => {
   const { user } = useAuthContext()
@@ -57,8 +59,13 @@ export const Header = () => {
               </Menu>
               </div>
             ) : (
-              <div>
-                login
+              <div className={styles.header_unloggedin_menu}>
+                <div>
+                  <Link href="/signup">Signup</Link>
+                </div>
+                <div className={styles.header_login_button}>
+                  <Link href="/login">Login</Link>
+                </div>
               </div>
             )}
           </Toolbar>

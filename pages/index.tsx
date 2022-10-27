@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import Link from 'next/link'
 import { Event } from '@prisma/client';
 import getMonth from 'date-fns/getMonth'
 import styles from '../styles/Home.module.scss'
@@ -145,12 +144,6 @@ const Home: NextPage = () => {
             <div>
               <button onClick={() => setShow(true)}>新規作成</button>
             </div>
-            <Button>
-              <Link href="/signup">sign up</Link>
-            </Button>
-            <Button>
-              <Link href="/login">login</Link>
-            </Button>
           </div>
         </main>
       </div>
