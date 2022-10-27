@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import { Modal } from '@mui/material';
 
 type Props = {
   show: boolean,
@@ -103,10 +104,13 @@ export default function EventRegistModal ({show, setShow}:Props) {
     getStores()
     getFormats()
   },[])
-  if(show) {
+  // if(show) {
     return (
       <>
-        <div className={styles.overlay}>
+        <Modal 
+          open={show}
+          onClose={setShow}>
+        {/* <div className={styles.overlay}> */}
           <div className={styles.modal_container}>
             <div className={styles.regist_content}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -160,9 +164,11 @@ export default function EventRegistModal ({show, setShow}:Props) {
               action={action}
             />
           </div>
-        </div>
+        {/* </div> */}
+        </Modal>
       </>
-  )}else {
-    return <></>
-  }
+    )
+  // )}else {
+  //   return <></>
+  // }
 }

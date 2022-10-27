@@ -2,10 +2,12 @@ import { AccountCircle } from "@mui/icons-material"
 import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from "@mui/material"
 import { useState } from "react";
 import { useAuthContext } from "../lib/authContext";
+import { Logout } from "../components/logout" 
 
 
 export const Header = () => {
-  const auth = useAuthContext()
+  const { user } = useAuthContext()
+  const isLoggedIn = !!user
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -22,7 +24,7 @@ export const Header = () => {
             <Typography variant="h6" noWrap sx={{ flexGrow: 1 }} component="div">
               MTG-scheduler
             </Typography>
-            {auth && (
+            {isLoggedIn ? (
               <div>
                 <IconButton
                 size="large"
@@ -51,7 +53,12 @@ export const Header = () => {
               >
                 <MenuItem>Profile</MenuItem>
                 <MenuItem>My account</MenuItem>
+                <MenuItem><Logout/></MenuItem>
               </Menu>
+              </div>
+            ) : (
+              <div>
+                login
               </div>
             )}
           </Toolbar>
