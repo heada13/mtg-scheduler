@@ -1,4 +1,4 @@
-import styles from '../styles/Home.module.scss'
+import styles from '../styles/main.module.scss'
 import { Event } from '@prisma/client';
 
 type Props = {

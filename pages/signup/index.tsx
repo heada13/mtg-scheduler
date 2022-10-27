@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { app } from "../../firebase"
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"
 import { useState } from 'react';
-import styles from '../../styles/Home.module.scss'
+import styles from '../../styles/main.module.scss'
 import { useRouter } from 'next/router';
 
 export default function SignUp () {

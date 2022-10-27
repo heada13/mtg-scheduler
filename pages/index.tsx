@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import { Event } from '@prisma/client';
 import getMonth from 'date-fns/getMonth'
-import styles from '../styles/Home.module.scss'
+import styles from '../styles/main.module.scss'
 import { useEffect, useState } from 'react'
 import format from 'date-fns/format'
 import getDate from 'date-fns/getDate'

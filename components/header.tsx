@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuthContext } from "../lib/authContext";
 import { Logout } from "../components/logout" 
 import Link from "next/link";
-import styles from '../styles/Home.module.scss'
+import styles from '../styles/main.module.scss'
 import { style } from "@mui/system";
 
 export const Header = () => {
