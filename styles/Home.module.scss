@@ -93,3 +93,11 @@
 .header_login_button {
   margin-left: 20px;
 }
+
+.event_tag_container {
+  border-radius: 5px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100px;
+}

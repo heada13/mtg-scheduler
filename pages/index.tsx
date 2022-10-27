@@ -16,6 +16,7 @@ import endOfMonth from 'date-fns/endOfMonth'
 import EventRegistModal from '../components/eventRegistModal'
 import Button from '@mui/material/Button'
 import { Header } from '../components/header';
+import { EventTag } from '../components/eventTag';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -126,7 +127,7 @@ const Home: NextPage = () => {
                         {getDate(date)}
                         {eventByDay[getDate(date)]?.map(event => (
                           getMonth(date) === getMonth(new Date(event.event_day)) &&
-                          (<div key={event.id}>{event.event_name}</div>)
+                          (<EventTag key={event.id} event={event}></EventTag>)
                           ))}
                         </td>
                     ))}
