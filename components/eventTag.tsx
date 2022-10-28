@@ -1,5 +1,9 @@
 import styles from '../styles/main.module.scss'
 import { Event } from '@prisma/client';
+// import Link from "next/link";
+import { useRouter } from "next/router";
+import { inputEventDetail } from '../states/eventDetailState'
+import { SetterOrUpdater, useSetRecoilState } from 'recoil';
 
 type Props = {
   event: Event
@@ -21,15 +25,28 @@ const backgroundColorType: backgroundColorObj = {
   9:'yellow'
 }
 
-export const EventTag = ({event}:Props) => {
+export const EventTag = ({ event }: Props) => {
   const formatId = event.event_format
   const backgroundColor = backgroundColorType[formatId]
+  // const query = JSON.stringify(event)
+  const router = useRouter();
+  const setEventDetailState: SetterOrUpdater<Event|null> = useSetRecoilState(inputEventDetail)
+  
+  const pushEventPage = () => {
+    setEventDetailState(event)
+    router.push('/eventDetail')
+  }
 
   return (
     <>
-      <div className={styles.event_tag_container} style={{backgroundColor:backgroundColor}}>
-        {event.event_name}
-      </div>
+      {/* <Link href={{pathname:'event', query: query}}> */}
+        <div 
+          className={styles.event_tag_container} 
+          style={{backgroundColor:backgroundColor}}
+          onClick={pushEventPage}>
+          {event.event_name}
+        </div>
+      {/* </Link> */}
     </>
   )
 }

@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }: AuthProps) => {
     router.pathname === "/login" ||
     router.pathname === "/signup"
   const value = { user }
-
   useEffect(() => {
     const authStateChanged = onAuthStateChanged(auth, (user) => {
       setUser(user)
