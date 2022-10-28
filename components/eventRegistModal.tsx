@@ -88,7 +88,7 @@ export default function EventRegistModal ({show, setShow}:Props) {
   const eventPost = async () => {
     const offset = offsetDate(postData.date)
     setPostData((pre) => ({...pre, date: offset}))
-    const post = await fetch('/api/eventPost', {
+    const post = await fetch('/api/postEvent', {
       method: "POST",
       body: JSON.stringify(postData),
       headers: {

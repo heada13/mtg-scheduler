@@ -54,7 +54,6 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem>Profile</MenuItem>
-                <MenuItem>My account</MenuItem>
                 <MenuItem><Logout/></MenuItem>
               </Menu>
               </div>
