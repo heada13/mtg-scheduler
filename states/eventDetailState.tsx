@@ -5,7 +5,7 @@ import { recoilPersist } from "recoil-persist";
 const { persistAtom } = recoilPersist();
 
 export const inputEventDetail = atom<Event|null>({
-  key:'eventDetail',
+  key:'eventDetailKey',
   default:null,
   effects_UNSTABLE: [persistAtom]
 })

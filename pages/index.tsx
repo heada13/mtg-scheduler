@@ -15,7 +15,7 @@ import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
 import EventRegistModal from '../components/eventRegistModal'
 import Button from '@mui/material/Button'
-import { Header } from '../components/header';
+// import { Header } from '../components/header';
 import { EventTag } from '../components/eventTag';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
@@ -106,7 +106,7 @@ const Home: NextPage = () => {
     <>
       <EventRegistModal show={show} setShow={setShow}/>
       <div>
-        <Header />
+        {/* <Header /> */}
         <main className={styles.main}>
           <div className={styles.calendar_main}>
             {format(firstDayOfTheMonth, 'y年M月')}
