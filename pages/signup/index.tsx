@@ -15,8 +15,25 @@ export default function SignUp () {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await createUserWithEmailAndPassword(auth, email, password)
-    router.push("/")
+    const create = await createUserWithEmailAndPassword(auth, email, password)
+    console.log("create",create)
+    const uid = create.user.uid
+    const postBody = {
+      name:"",
+      email:email,
+      pass:"",
+      auth_uid:uid
+    }
+    const post = await fetch('/api/postMember',{
+      method:'POST',
+      body:JSON.stringify(postBody),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    if(post.status === 200) {
+      router.push("/")
+    }
   }
   const handleChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.currentTarget.value)
