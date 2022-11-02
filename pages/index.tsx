@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { Event } from '@prisma/client';
+import { Event, Member } from '@prisma/client';
 import getMonth from 'date-fns/getMonth'
 import styles from '../styles/main.module.scss'
 import { useEffect, useState } from 'react'
@@ -17,6 +17,9 @@ import EventRegistModal from '../components/eventRegistModal'
 import Button from '@mui/material/Button'
 // import { Header } from '../components/header';
 import { EventTag } from '../components/eventTag';
+import { useAuthContext } from "../lib/authContext";
+import { inputMember } from '../states/eventDetailState'
+import { SetterOrUpdater, useSetRecoilState } from 'recoil';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -48,6 +51,8 @@ const Home: NextPage = () => {
   const [show, setShow] = useState(false)
   const [calendar, setCalendar] = useState(getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth))
   const [open, setOpen] = useState<boolean>(false)
+  const { user } = useAuthContext()
+  const setMember: SetterOrUpdater<Member|null> = useSetRecoilState(inputMember)
   const addMonthsCalendar = async () => {
     const addMonthFirstDay = addMonths(firstDayOfTheMonth,1)
     setFirstDay(addMonthFirstDay)
@@ -55,7 +60,7 @@ const Home: NextPage = () => {
     setlastDay(addMonthLastDay)
     const addMonthCalendar = getCalendarArray(addMonthFirstDay,addMonthLastDay)
     setCalendar(addMonthCalendar)
-    await getUsers(addMonthFirstDay,addMonthLastDay)
+    await getEvents(addMonthFirstDay,addMonthLastDay)
   }
   const subMonthsCalendar = async () => {
     const subMonthFirstDay = subMonths(firstDayOfTheMonth,1)
@@ -64,7 +69,7 @@ const Home: NextPage = () => {
     setlastDay(subMonthLastDay)
     const subMonthCalendar = getCalendarArray(subMonthFirstDay,subMonthLastDay)
     setCalendar(subMonthCalendar)
-    await getUsers(subMonthFirstDay, subMonthLastDay)
+    await getEvents(subMonthFirstDay, subMonthLastDay)
   }
   const currnetMonthsCalendar = async () => {
     const currentMonthFirstDay = startOfMonth(offsetTime())
@@ -73,7 +78,7 @@ const Home: NextPage = () => {
     setlastDay(currentMonthLastDay)
     const nowCalendar = getCalendarArray(currentMonthFirstDay,currentMonthLastDay)
     setCalendar(nowCalendar)
-    await getUsers(currentMonthFirstDay, currentMonthLastDay)
+    await getEvents(currentMonthFirstDay, currentMonthLastDay)
   }
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -92,16 +97,28 @@ const Home: NextPage = () => {
     setEventByDay(listByDate)
   }
   // 表示月のイベント全て取得
-  const getUsers =  async (firstDate:Date,lastDate:Date ) => {
+  const getEvents =  async (firstDate:Date,lastDate:Date ) => {
     const formatfirstDate = formatDate(firstDate)
     const formatlastDate = formatDate(lastDate)
     const response = await fetch(`/api/events?first=${formatfirstDate}&last=${formatlastDate}`)
     const events = await response.json()
     eventByDateList(events)
   }
+  const getMember = async () => {
+    console.log("user",user)
+    if (!user) return
+    const uid = user.uid
+    const response = await fetch(`/api/getMember?uid=${uid}`)
+    const member = await response.json()
+    console.log("member",member)
+    setMember(member)
+  }
   useEffect(() => {
-    getUsers(startOfMonth(offsetTime()), endOfMonth(offsetTime()))
+    getEvents(startOfMonth(offsetTime()), endOfMonth(offsetTime()))
   },[]);
+  useEffect(() => {
+    getMember()
+  },[user])
   return (
     <>
       <EventRegistModal show={show} setShow={setShow}/>
