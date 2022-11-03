@@ -6,8 +6,10 @@ import { Logout } from "../components/logout"
 import Link from "next/link";
 import styles from '../styles/main.module.scss'
 import { style } from "@mui/system";
+import { useRouter } from "next/router";
 
 export const Header = () => {
+  const router = useRouter()
   const { user } = useAuthContext()
   const isLoggedIn = !!user
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -18,6 +20,10 @@ export const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleProfile = () => {
+    router.push('/profile')
+  }
 
   return (
     <>
@@ -53,7 +59,7 @@ export const Header = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem>Profile</MenuItem>
+                <MenuItem onClick={handleProfile}>Profile</MenuItem>
                 <MenuItem><Logout/></MenuItem>
               </Menu>
               </div>

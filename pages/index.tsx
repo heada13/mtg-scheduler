@@ -111,7 +111,7 @@ const Home: NextPage = () => {
     const response = await fetch(`/api/getMember?uid=${uid}`)
     const member = await response.json()
     console.log("member",member)
-    setMember(member)
+    setMember(member[0])
   }
   useEffect(() => {
     getEvents(startOfMonth(offsetTime()), endOfMonth(offsetTime()))
