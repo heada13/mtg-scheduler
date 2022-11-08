@@ -106,3 +106,22 @@
 .profile_container {
   margin-top: 100px;
 }
+
+.edit_profile_container {
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit_profile_blank_img {
+  display: flex;
+  width: 200px;
+  height: 200px;
+  background-color: gray;
+  border-radius: 10%;
+}
+
+.edit_profile_uploaded_img {
+  width: 200px;
+  height: 200px;
+}
