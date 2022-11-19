@@ -2,6 +2,7 @@ import { useRef, useState } from "react"
 import TextField from '@mui/material/TextField';
 import styles from '../../styles/main.module.scss'
 import ImageIcon from '@mui/icons-material/Image';
+import { Button } from "@mui/material";
 
 type Post = {
   name: string
@@ -29,6 +30,42 @@ const EditProfile = () => {
     }
   }
 
+  const updateMemberInfomation = async () => {
+    const apiGatewayUrl = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_URL || ""
+    console.log("url",apiGatewayUrl)
+    // const apiGatewayUrl = "https://pdsr395127.execute-api.ap-northeast-1.amazonaws.com/test-profile-image"
+    // const url = new URL(apiGatewayUrl)
+    const apikey = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_API_KEY || ""
+    // const fileName = await fetch(apiGatewayUrl, {
+    //   method: "POST",
+    //   body: image,
+    //   headers: {
+    //     "Content-Type": "multipart/form-data",
+    //     "x-api-key": apikey
+    //   }
+    // }).then((res) => {
+    //   return res
+    // })
+    var formdata = new FormData()
+    if(image){
+      console.log("true")
+      formdata.append("image",image)
+      console.log("append",formdata.get("image"))
+    }
+    // const fileName = await fetch("/api/postProfileImage", {
+    const fileName = await fetch(apiGatewayUrl, {
+      // credentials: 'include',
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+        // "x-api-key": apikey
+      },
+      body: formdata,
+    })
+    const json = await fileName.json()
+    console.log("filename",json)
+  }
+
   return (
     <>
       <div className={styles.edit_profile_container}>
@@ -51,6 +88,7 @@ const EditProfile = () => {
           label="SNSリンク"
           value={postSnsData.link}
         />
+        <Button onClick={updateMemberInfomation}>更新</Button>
       </div>
     </>
   )
