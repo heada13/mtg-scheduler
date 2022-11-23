@@ -32,38 +32,27 @@ const EditProfile = () => {
 
   const updateMemberInfomation = async () => {
     const apiGatewayUrl = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_URL || ""
-    console.log("url",apiGatewayUrl)
-    // const apiGatewayUrl = "https://pdsr395127.execute-api.ap-northeast-1.amazonaws.com/test-profile-image"
-    // const url = new URL(apiGatewayUrl)
-    const apikey = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_API_KEY || ""
-    // const fileName = await fetch(apiGatewayUrl, {
-    //   method: "POST",
-    //   body: image,
-    //   headers: {
-    //     "Content-Type": "multipart/form-data",
-    //     "x-api-key": apikey
-    //   }
-    // }).then((res) => {
-    //   return res
-    // })
-    var formdata = new FormData()
-    if(image){
-      console.log("true")
-      formdata.append("image",image)
-      console.log("append",formdata.get("image"))
-    }
-    // const fileName = await fetch("/api/postProfileImage", {
     const fileName = await fetch(apiGatewayUrl, {
-      // credentials: 'include',
       method: "POST",
       headers: {
         "Content-Type": "multipart/form-data",
-        // "x-api-key": apikey
       },
-      body: formdata,
+      body: image,
     })
     const json = await fileName.json()
-    console.log("filename",json)
+    // const body = JSON.parse(json.body)
+    console.log("filename", json)
+  }
+
+  const [photo, setPhoto] = useState<string>()
+
+  const getImage = async () => {
+    const apiGatewayUrl = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_URL || ""
+    const url = `${apiGatewayUrl}?file=text.jpg`
+    const get = await fetch(url)
+    const blob = await get.blob()
+    const objurl = URL.createObjectURL(blob)
+    setPhoto(objurl)
   }
 
   return (
@@ -71,6 +60,10 @@ const EditProfile = () => {
       <div className={styles.edit_profile_container}>
         {!!objectUrl
         ? <img src={objectUrl} alt="プロフィール画像" className={styles.edit_profile_uploaded_img}/>
+        : <div className={styles.edit_profile_blank_img} onClick={uploadedImage}> </div>
+        }
+        {!!photo
+        ? <img src={photo} alt="プロフィール画像" className={styles.edit_profile_uploaded_img}/>
         : <div className={styles.edit_profile_blank_img} onClick={uploadedImage}> </div>
         }
         <input 
@@ -89,6 +82,8 @@ const EditProfile = () => {
           value={postSnsData.link}
         />
         <Button onClick={updateMemberInfomation}>更新</Button>
+        <Button onClick={getImage}>取得</Button>
+        {/* <img src={photo} alt=""/> */}
       </div>
     </>
   )
