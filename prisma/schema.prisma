@@ -29,7 +29,9 @@ model Member {
   email       String
   pass        String
   auth_uid    String   @default("xxx")
+  image_file_name String @default("/")
   event_list  MemberList[]
+  sns_list    SnsInfo[]
   created_at  DateTime @default(now()) @db.DateTime(0)
   updated_at  DateTime @default(now()) @db.DateTime(0)
   delete_flag Int      @default(0)
@@ -50,6 +52,7 @@ model SnsInfo {
   id          Int      @id @default(autoincrement())
   member_id   Int
   sns_link    String
+  member      Member   @relation(fields: [member_id], references: [id])
   created_at  DateTime @default(now()) @db.DateTime(0)
   updated_at  DateTime @default(now()) @db.DateTime(0)
   delete_flag Int      @default(0)

@@ -3,15 +3,13 @@ import TextField from '@mui/material/TextField';
 import styles from '../../styles/main.module.scss'
 import ImageIcon from '@mui/icons-material/Image';
 import { Button } from "@mui/material";
-
-type Post = {
-  name: string
-}
+import { inputMember } from '../../states/eventDetailState'
+import { useRecoilValue } from "recoil";
+import { Member } from '@prisma/client';
 
 const EditProfile = () => {
-  const [postProfileData, setPostProfileData] = useState<Post>({
-    name: ''
-  })
+  const member = useRecoilValue(inputMember)
+  const [memberName, setMemberName] = useState<string>("")
   const [postSnsData, setPostSnsData] = useState({
     link: ''
   })
@@ -29,42 +27,64 @@ const EditProfile = () => {
       console.log("image",objectUrl)
     }
   }
+  const handleChange = (e:any) => {
+    setMemberName(e.target.value)
+  }
 
+  const apiGatewayUrl = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_URL || ""
   const updateMemberInfomation = async () => {
-    const apiGatewayUrl = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_URL || ""
-    const fileName = await fetch(apiGatewayUrl, {
+    // s3に画像データを格納してファイル名を取得
+    const imageFileName = await fetch(apiGatewayUrl, {
       method: "POST",
       headers: {
         "Content-Type": "multipart/form-data",
       },
       body: image,
     })
-    const json = await fileName.json()
-    // const body = JSON.parse(json.body)
-    console.log("filename", json)
+    const json = await imageFileName.json()
+    const body = JSON.parse(json.body)
+    const fileName = body.filename
+
+    // プロフィール更新内容をdbに登録
+    const postData = {
+      id: member?.id,
+      name: memberName,
+      image_file_name: fileName
+    }
+    const updateMember = await fetch("/api/updateMember", {
+        method: "POST",
+        body: JSON.stringify(postData),
+        headers: {
+          "Content-Type": "application/json",
+        }
+      }
+    )
   }
 
-  const [photo, setPhoto] = useState<string>()
-
-  const getImage = async () => {
-    const apiGatewayUrl = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_URL || ""
-    const url = `${apiGatewayUrl}?file=text.jpg`
-    const get = await fetch(url)
-    const blob = await get.blob()
-    const objurl = URL.createObjectURL(blob)
-    setPhoto(objurl)
-  }
+  // const getProfileImage = async () => {
+  //   const fileName = member?.image_file_name
+  //   console.log("file",fileName)
+  //   const url = `${apiGatewayUrl}?file=${fileName}`
+  //   const get = await fetch(url)
+  //   const blob = await get.blob()
+  //   const objectUrl = URL.createObjectURL(blob)
+  //   // setPhoto(objurl)
+  //   setObjeceUrl(objectUrl)
+  // }
 
   return (
     <>
       <div className={styles.edit_profile_container}>
         {!!objectUrl
-        ? <img src={objectUrl} alt="プロフィール画像" className={styles.edit_profile_uploaded_img}/>
-        : <div className={styles.edit_profile_blank_img} onClick={uploadedImage}> </div>
-        }
-        {!!photo
-        ? <img src={photo} alt="プロフィール画像" className={styles.edit_profile_uploaded_img}/>
-        : <div className={styles.edit_profile_blank_img} onClick={uploadedImage}> </div>
+        ? <img 
+          src={objectUrl} 
+          alt="プロフィール画像" 
+          className={styles.edit_profile_uploaded_img}
+          onClick={uploadedImage}/>
+        : <div 
+          className={styles.edit_profile_blank_img} 
+          onClick={uploadedImage}> 
+          </div>
         }
         <input 
           type="file" 
@@ -75,15 +95,10 @@ const EditProfile = () => {
           />
         <TextField
           label="アカウント名"
-          value={postProfileData.name}
-        />
-        <TextField
-          label="SNSリンク"
-          value={postSnsData.link}
+          value={memberName}
+          onChange={handleChange}
         />
         <Button onClick={updateMemberInfomation}>更新</Button>
-        <Button onClick={getImage}>取得</Button>
-        {/* <img src={photo} alt=""/> */}
       </div>
     </>
   )

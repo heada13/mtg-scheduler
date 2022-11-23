@@ -15,7 +15,6 @@ import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
 import EventRegistModal from '../components/eventRegistModal'
 import Button from '@mui/material/Button'
-// import { Header } from '../components/header';
 import { EventTag } from '../components/eventTag';
 import { useAuthContext } from "../lib/authContext";
 import { inputMember } from '../states/eventDetailState'
