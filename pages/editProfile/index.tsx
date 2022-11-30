@@ -1,11 +1,14 @@
-import { useRef, useState } from "react"
+import { Fragment, useRef, useState } from "react"
 import TextField from '@mui/material/TextField';
 import styles from '../../styles/main.module.scss'
 import ImageIcon from '@mui/icons-material/Image';
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { inputMember } from '../../states/eventDetailState'
 import { useRecoilValue } from "recoil";
 import { Member } from '@prisma/client';
+import Snackbar from '@mui/material/Snackbar';
+import CloseIcon from '@mui/icons-material/Close';
+
 
 const EditProfile = () => {
   const member = useRecoilValue(inputMember)
@@ -15,6 +18,7 @@ const EditProfile = () => {
   })
   const [image, setImage] = useState(null)
   const [objectUrl, setObjeceUrl] = useState<string>("")
+  const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null)
   const uploadedImage = () => {
     inputRef.current?.click()
@@ -59,7 +63,33 @@ const EditProfile = () => {
         }
       }
     )
+    console.log("member", updateMember)
+    if(updateMember.status === 200) {
+      setOpen(true)
+    }
   }
+
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+  const action = (
+    <Fragment>
+      <Button color="secondary" size="small" onClick={handleClose}>
+        UNDO
+      </Button>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </Fragment>
+  );
 
   // const getProfileImage = async () => {
   //   const fileName = member?.image_file_name
@@ -99,6 +129,13 @@ const EditProfile = () => {
           onChange={handleChange}
         />
         <Button onClick={updateMemberInfomation}>更新</Button>
+        <Snackbar
+          open={open}
+          autoHideDuration={5000}
+          onClose={handleClose}
+          message="登録成功"
+          action={action}
+        />
       </div>
     </>
   )

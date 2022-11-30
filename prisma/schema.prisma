@@ -19,7 +19,7 @@ model Event {
   formats      Format   @relation(fields: [event_format], references: [id])
   member_list  MemberList[]
   created_at   DateTime @default(now()) @db.DateTime(0)
-  updated_at   DateTime @default(now()) @db.DateTime(0)
+  updated_at   DateTime @default(now()) @db.DateTime(0) @updatedAt
   delete_flag  Int      @default(0)
 }
 
@@ -33,7 +33,7 @@ model Member {
   event_list  MemberList[]
   sns_list    SnsInfo[]
   created_at  DateTime @default(now()) @db.DateTime(0)
-  updated_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0) @updatedAt
   delete_flag Int      @default(0)
 }
 
@@ -44,7 +44,7 @@ model MemberList {
   member_id   Int
   member      Member   @relation(fields: [member_id], references: [id])
   created_at  DateTime @default(now()) @db.DateTime(0)
-  updated_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0) @updatedAt
   delete_flag Int      @default(0)
 }
 
@@ -54,7 +54,7 @@ model SnsInfo {
   sns_link    String
   member      Member   @relation(fields: [member_id], references: [id])
   created_at  DateTime @default(now()) @db.DateTime(0)
-  updated_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0) @updatedAt
   delete_flag Int      @default(0)
 }
 
@@ -65,7 +65,7 @@ model Store {
   address     String
   events      Event[]
   created_at  DateTime @default(now()) @db.DateTime(0)
-  updated_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0) @updatedAt
   delete_flag Int      @default(0)
 }
 
@@ -75,6 +75,6 @@ model Format {
   english_format_name String   @default("Standard")
   events              Event[]
   created_at          DateTime @default(now()) @db.DateTime(0)
-  updated_at          DateTime @default(now()) @db.DateTime(0)
+  updated_at          DateTime @default(now()) @db.DateTime(0) @updatedAt
   delete_flag         Int      @default(0)
 }
