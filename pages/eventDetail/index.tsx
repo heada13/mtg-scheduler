@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Event } from '@prisma/client';
+// import { Event } from '@prisma/client';
 import { useRecoilValue } from "recoil";
-import { inputEventDetail } from "../../states/eventDetailState";
+import { inputEventDetail, inputMember } from "../../states/eventDetailState";
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Snackbar } from "@mui/material";
 import styles from '../../styles/main.module.scss'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -17,6 +17,7 @@ export default function EventDetail(){
   const [open, setOpen] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
   const eventDetailState = useRecoilValue(inputEventDetail)!
+  const memberState = useRecoilValue(inputMember)
   useEffect(() => {
     // console.log("event page", query)
     // if(eventDetailState) {
@@ -26,13 +27,19 @@ export default function EventDetail(){
       setBgColor(formatTagColor.tagColor[formatId])
   },[])
   const postMemberList = async () => {
+    const postData = {
+      event_id: eventData?.id,
+      member_id: memberState?.id
+    }
+    console.log("member",memberState)
     const post = await fetch('/api/postMemberList', {
       method: "POST",
-      // body: JSON.stringify(postData),
+      body: JSON.stringify(postData),
       headers: {
         "Content-Type": "application/json",
       }
     })
+    setDialogOpen(false)
     if(post.status === 200) {
       // setShow(false)
       setOpen(true)
@@ -64,7 +71,7 @@ export default function EventDetail(){
         </DialogContent>
         <DialogActions>
           <Button onClick={()=> setDialogOpen(false)}>キャンセル</Button>
-          <Button>参加表明</Button>
+          <Button onClick={postMemberList}>参加表明</Button>
         </DialogActions>
       </Dialog>
       <div className={styles.event_detail_container}>
