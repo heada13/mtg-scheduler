@@ -125,3 +125,27 @@
   width: 200px;
   height: 200px;
 }
+
+.event_detail_container {
+  margin-top: 100px;
+}
+
+.event_detail_button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.event_detail_back_button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.event_detail_format_tag {
+  border-radius: 5px;
+  width: 100px;
+  padding: 3px 6px;
+}

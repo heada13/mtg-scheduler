@@ -4,9 +4,18 @@ import { Event } from '@prisma/client';
 import { useRouter } from "next/router";
 import { inputEventDetail } from '../states/eventDetailState'
 import { SetterOrUpdater, useSetRecoilState } from 'recoil';
+import { EventWithStoreAndFormat } from '../types/returnType'
+
+// interface Props extends Event {
+//   event: Event,
+//   formats: {
+//     id: number,
+//     format_name: string
+//   }
+// }
 
 type Props = {
-  event: Event
+  event: EventWithStoreAndFormat
 }
 
 type backgroundColorObj = {
@@ -25,12 +34,12 @@ const backgroundColorType: backgroundColorObj = {
   9:'yellow'
 }
 
-export const EventTag = ({ event }: Props) => {
+export const EventTag = ({event}: Props) => {
   const formatId = event.event_format
   const backgroundColor = backgroundColorType[formatId]
   // const query = JSON.stringify(event)
   const router = useRouter();
-  const setEventDetailState: SetterOrUpdater<Event|null> = useSetRecoilState(inputEventDetail)
+  const setEventDetailState: SetterOrUpdater<EventWithStoreAndFormat|null> = useSetRecoilState(inputEventDetail)
   
   const pushEventPage = () => {
     setEventDetailState(event)

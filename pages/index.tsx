@@ -19,6 +19,7 @@ import { EventTag } from '../components/eventTag';
 import { useAuthContext } from "../lib/authContext";
 import { inputMember } from '../states/eventDetailState'
 import { SetterOrUpdater, useSetRecoilState } from 'recoil';
+import { EventWithStoreAndFormat } from '../types/returnType'
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -46,7 +47,7 @@ const Home: NextPage = () => {
   // const now = new Date(Date.now() + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000))
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(offsetTime()))
   const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(offsetTime()))
-  const [eventByDay, setEventByDay] = useState<Event[][]>([[]])
+  const [eventByDay, setEventByDay] = useState<EventWithStoreAndFormat[][]>([[]])
   const [show, setShow] = useState(false)
   const [calendar, setCalendar] = useState(getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth))
   const [open, setOpen] = useState<boolean>(false)
@@ -82,14 +83,14 @@ const Home: NextPage = () => {
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-  const eventByDateList = (events:Event[]) => {
+  const eventByDateList = (events:EventWithStoreAndFormat[]) => {
     // 31日分の空のデータを生成
     const listByDate = new Array(31)
     // 初期値に空のリストを格納
     for(let i = 0; i < listByDate.length; i++){
       listByDate[i] = []
     }
-    events.forEach((el:Event) => {
+    events.forEach((el:EventWithStoreAndFormat) => {
       const eventDate = getDate(new Date(el.event_day))
       listByDate[eventDate].push(el)
     })
@@ -141,7 +142,7 @@ const Home: NextPage = () => {
                         getDay(date) === 6 ? `${styles.saturday_cell} ${styles.cell}` : 
                         styles.cell } >
                         {getDate(date)}
-                        {eventByDay[getDate(date)]?.map(event => (
+                        {eventByDay[getDate(date)]?.map( event => (
                           getMonth(date) === getMonth(new Date(event.event_day)) &&
                           (<EventTag key={event.id} event={event}></EventTag>)
                           ))}

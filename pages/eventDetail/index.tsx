@@ -3,23 +3,29 @@ import { useEffect, useState } from "react";
 import { Event } from '@prisma/client';
 import { useRecoilValue } from "recoil";
 import { inputEventDetail } from "../../states/eventDetailState";
-import { Button, Snackbar } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Snackbar } from "@mui/material";
+import styles from '../../styles/main.module.scss'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { tagColor } from '../../const/tagColor'
+import { EventWithStoreAndFormat } from '../../types/returnType'
 
 export default function EventDetail(){
+  const formatTagColor = { tagColor }
   const router = useRouter();
-  const [eventData, setEvent] = useState<Event|null>()
-  const [open, setOpen] = useState(false);
-  const eventDetailState = useRecoilValue(inputEventDetail)
-  // const query =  JSON.parse(Object.keys(router.query)[0])
+  const [eventData, setEvent] = useState<EventWithStoreAndFormat>()
+  const [bgColor, setBgColor] = useState<string>()
+  const [open, setOpen] = useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false)
+  const eventDetailState = useRecoilValue(inputEventDetail)!
   useEffect(() => {
     // console.log("event page", query)
-    setEvent(eventDetailState)
+    // if(eventDetailState) {
+      setEvent(eventDetailState)
+    // }
+      const formatId = eventDetailState!.event_format
+      setBgColor(formatTagColor.tagColor[formatId])
   },[])
   const postMemberList = async () => {
-    // const postData = {
-    //   event_id: ,
-    //   member_id: 
-    // }
     const post = await fetch('/api/postMemberList', {
       method: "POST",
       // body: JSON.stringify(postData),
@@ -44,10 +50,34 @@ export default function EventDetail(){
         onClose={handleClose}
         message="登録成功"
       />
-      <div>
-        <Button onClick={() => router.back()}>戻る</Button>
-        <p>{eventData?.id}</p>
-        <p>{eventData?.event_name}</p>
+      <Dialog
+        open={dialogOpen}
+        // TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            このイベントに参加表明をしますか？
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=> setDialogOpen(false)}>キャンセル</Button>
+          <Button>参加表明</Button>
+        </DialogActions>
+      </Dialog>
+      <div className={styles.event_detail_container}>
+        <div className={styles.event_detail_button}>
+          <div className={styles.event_detail_back_button}>
+            <ArrowBackIcon onClick={() => router.back()}></ArrowBackIcon>
+            <Button onClick={() => router.back()}>戻る</Button>
+          </div>
+          <Button variant="contained" onClick={() => setDialogOpen(true)}>参加表明</Button>
+        </div>
+        <label htmlFor="">イベント名</label>
+        <h1>{eventData?.event_name}</h1>
+        <div className={styles.event_detail_format_tag} style={{backgroundColor:bgColor}}>{eventData?.formats.format_name}</div>
       </div>
     </>
   )

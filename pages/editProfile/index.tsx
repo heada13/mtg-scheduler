@@ -9,7 +9,6 @@ import { Member } from '@prisma/client';
 import Snackbar from '@mui/material/Snackbar';
 import CloseIcon from '@mui/icons-material/Close';
 
-
 const EditProfile = () => {
   const member = useRecoilValue(inputMember)
   const [memberName, setMemberName] = useState<string>("")
