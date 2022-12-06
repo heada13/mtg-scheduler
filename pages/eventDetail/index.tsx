@@ -8,6 +8,8 @@ import styles from '../../styles/main.module.scss'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { tagColor } from '../../const/tagColor'
 import { EventWithStoreAndFormat } from '../../types/returnType'
+import { UnregisterDialog } from '../../components/unregisterDialog'
+import { RegisterDialog } from '../../components/registerDialog'
 
 export default function EventDetail(){
   const formatTagColor = { tagColor }
@@ -16,6 +18,7 @@ export default function EventDetail(){
   const [bgColor, setBgColor] = useState<string>()
   const [open, setOpen] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
+  const [unregisterDialogOpen, setUnregistDialogOpen] = useState<boolean>(false)
   const [regist, setRegist] = useState<boolean>(false)
   const eventDetailState = useRecoilValue(inputEventDetail)!
   const memberState = useRecoilValue(inputMember)
@@ -29,13 +32,22 @@ export default function EventDetail(){
       setBgColor(formatTagColor.tagColor[formatId])
   },[])
   const getRegistState = async () => {
-    const memberID = memberState?.id
-    const eventID = eventDetailState?.id
-    const response = await fetch(`/api/getMemberList?member=${memberID}&event=${eventID}`)
+    const postData = {
+      event_id: eventData?.id,
+      member_id: memberState?.id
+    }
+    const response = await fetch('/api/getMemberList', {
+      method: "POST",
+      body: JSON.stringify(postData),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
     const eventRegisted = await response.json()
-    console.log("regist",eventRegisted)
-    if(eventRegisted) {
+    if(eventRegisted.length) {
       setRegist(true)
+    } else {
+      setRegist(false)
     }
   }
 
@@ -54,12 +66,38 @@ export default function EventDetail(){
     })
     setDialogOpen(false)
     if(post.status === 200) {
+      setOpen(true)
+    }
+    getRegistState()
+  }
+  const deleteMemberList = async () => {
+    const postData = {
+      event_id: eventData?.id,
+      member_id: memberState?.id
+    }
+    console.log("member",postData)
+    const post = await fetch('/api/deleteMemberList', {
+      method: "POST",
+      body: JSON.stringify(postData),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    })
+    setUnregistDialogOpen(false)
+    if(post.status === 200) {
       // setShow(false)
       setOpen(true)
     }
+    getRegistState()
   }
   const handleClose = () => {
     setOpen(false)
+  }
+  const handleCloseRegisterDialog = () => {
+    setDialogOpen(false)
+  }
+  const handleCloseUnregisterDialog = () => {
+    setUnregistDialogOpen(false)
   }
 
   return (
@@ -70,23 +108,20 @@ export default function EventDetail(){
         onClose={handleClose}
         message="登録成功"
       />
-      <Dialog
-        open={dialogOpen}
-        // TransitionComponent={Transition}
-        keepMounted
-        onClose={handleClose}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            このイベントに参加表明をしますか？
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={()=> setDialogOpen(false)}>キャンセル</Button>
-          <Button onClick={postMemberList}>参加表明</Button>
-        </DialogActions>
-      </Dialog>
+      <RegisterDialog
+      props={{
+        open: dialogOpen,
+        close: handleCloseRegisterDialog,
+        postMemberList: postMemberList   
+      }}
+      />
+      <UnregisterDialog
+      props={{
+        open: unregisterDialogOpen,
+        close: handleCloseUnregisterDialog,
+        deleteMemberList: deleteMemberList   
+      }}
+      />
       <div className={styles.event_detail_container}>
         <div className={styles.event_detail_button}>
           <div className={styles.event_detail_back_button}>
@@ -95,7 +130,7 @@ export default function EventDetail(){
           </div>
           {
             regist ?
-            <Button variant="contained" color="warning" onClick={() => setDialogOpen(true)}>登録削除</Button> :
+            <Button variant="contained" color="warning" onClick={() => setUnregistDialogOpen(true)}>登録削除</Button> :
             <Button variant="contained" onClick={() => setDialogOpen(true)}>参加表明</Button> 
           } 
         </div>
