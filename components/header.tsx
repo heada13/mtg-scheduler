@@ -29,7 +29,7 @@ export const Header = () => {
     <>
       <AppBar position="fixed" >
           <Toolbar>
-            <Typography variant="h6" noWrap sx={{ flexGrow: 1 }} component="div">
+            <Typography variant="h6" noWrap sx={{ flexGrow: 1 }} component="div" onClick={()=> router.push('/')}>
               MTG-scheduler
             </Typography>
             {isLoggedIn ? (

@@ -6,11 +6,26 @@ const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<MemberList[]|[]>,
+  res: NextApiResponse
 ) {
-  const body = req.body
-  const regist = await prisma.memberList.findMany({
-    where: body
+  const query = req.query
+  const { id } = query
+  // console.log("query",uid)
+  const memberList = await prisma.memberList.findMany({
+    select: {
+      member_id: true
+    },
+    where: {
+      event_id: id as unknown as number
+    }
   })
-  res.status(200).json(regist);
+  const memberIdList = memberList.map((el) => ({'id': el.member_id}) )
+  console.log("memberlist", memberIdList)
+  const membersInfo = await prisma.member.findMany({
+    where: {
+      OR: memberIdList
+    }
+  })
+  console.log("info", membersInfo)
+  res.status(200).json(membersInfo);
 }

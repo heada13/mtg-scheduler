@@ -44,8 +44,10 @@ const EditProfile = () => {
       },
       body: image,
     })
+    console.log("image",imageFileName)
     const json = await imageFileName.json()
     const body = JSON.parse(json.body)
+    console.log("body",body)
     const fileName = body.filename
 
     // プロフィール更新内容をdbに登録
