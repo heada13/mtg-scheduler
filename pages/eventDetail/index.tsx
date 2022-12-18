@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { Suspense, useEffect, useState } from "react";
 import { MemberList, Member } from '@prisma/client';
 import { useRecoilValue } from "recoil";
-import { inputEventDetail, inputMember } from "../../states/eventDetailState";
+import { inputEventDetail, inputMember } from "../../states/state";
 import { Button, CircularProgress, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
 import Paper from '@mui/material/Paper';
 import styles from '../../styles/main.module.scss'
@@ -32,7 +32,6 @@ export default function EventDetail(){
       getMemberList()
       setEvent(eventDetailState)
     // }
-      getImage()
       const formatId = eventDetailState!.event_format
       setBgColor(formatTagColor.tagColor[formatId])
   },[])
@@ -104,32 +103,7 @@ export default function EventDetail(){
     getRegistState()
     getMemberList()
   }
-
-  const [base64, setBase64] = useState<string>()
-  const getImage = async () => {
-    const apiGatewayUrl = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_URL || ""
-    const image = await fetch(`${apiGatewayUrl}?file=1e755589-a37a-44f7-874e-061ab26c676c.jpg`)
-    console.log("image",image)
-    const json = await image.json()
-    console.log("json,",json)
-    const img = `data:image/jpg;base64,${json}`
-    setBase64(img)
-    // const body = JSON.parse(json.body)
-    // console.log("body get",body)
-  }
   
-  type image = Awaited<Promise<string>>
-
-  const getImageRetrun = (filename: string) => {
-    const apiGatewayUrl = process.env.NEXT_PUBLIC_S3_PROFILE_IMAGE_URL || ""
-    const getImage = async () => {
-      const image = await fetch(`${apiGatewayUrl}?file=${filename}`)
-      const json = await image.json()
-      return json
-    }
-    const img = `data:image/jpg;base64,${getImage()}`
-    return img
-  }
   const handleClose = () => {
     setOpen(false)
   }
@@ -164,7 +138,7 @@ export default function EventDetail(){
       />
       <div className={styles.event_detail_container}>
         <div className={styles.event_detail_button}>
-          <div className={styles.event_detail_back_button}>
+          <div className={styles.back_button_container}>
             <ArrowBackIcon onClick={() => router.back()}></ArrowBackIcon>
             <Button onClick={() => router.back()}>戻る</Button>
           </div>
@@ -181,12 +155,6 @@ export default function EventDetail(){
         <Suspense fallback={<CircularProgress />}>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              {/* <TableHead>
-                <TableRow>
-                  <TableCell></TableCell>
-                  <TableCell align="center">名前</TableCell>
-                </TableRow>
-              </TableHead> */}
               <TableBody>
                 {memberList.map((row: any) => (
                   <TableRow
@@ -204,7 +172,6 @@ export default function EventDetail(){
               </TableBody>
             </Table>
           </TableContainer>
-          </Box>
         </Suspense>
       </div>
     </>

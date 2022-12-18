@@ -19,3 +19,9 @@ export const inputMember = atom<Member|null>({
   default: null,
   effects_UNSTABLE: [persistAtom]
 })
+
+export const inputEventsByDate = atom<EventWithStoreAndFormat[]|[]>({
+  key: 'eventsByDateKey',
+  default: [],
+  effects_UNSTABLE: [persistAtom]
+})

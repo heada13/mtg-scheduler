@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { inputMember } from "../../states/eventDetailState";
+import { inputMember } from "../../states/state";
 import styles from '../../styles/main.module.scss'
 import { Member } from "@prisma/client";
 import { Button } from "@mui/material";

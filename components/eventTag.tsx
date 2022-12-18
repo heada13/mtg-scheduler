@@ -2,7 +2,7 @@ import styles from '../styles/main.module.scss'
 import { Event } from '@prisma/client';
 // import Link from "next/link";
 import { useRouter } from "next/router";
-import { inputEventDetail } from '../states/eventDetailState'
+import { inputEventDetail } from '../states/state'
 import { SetterOrUpdater, useSetRecoilState } from 'recoil';
 import { EventWithStoreAndFormat } from '../types/returnType'
 

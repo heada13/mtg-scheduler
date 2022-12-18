@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import styles from '../../styles/main.module.scss'
 import ImageIcon from '@mui/icons-material/Image';
 import { Button, IconButton } from "@mui/material";
-import { inputMember } from '../../states/eventDetailState'
+import { inputMember } from '../../states/state'
 import { useRecoilValue } from "recoil";
 import { Member } from '@prisma/client';
 import Snackbar from '@mui/material/Snackbar';
@@ -27,7 +27,6 @@ const EditProfile = () => {
       const file = event.target.files[0]
       setImage(file)
       setObjeceUrl(URL.createObjectURL(file))
-      console.log("image",objectUrl)
     }
   }
   const handleChange = (e:any) => {
@@ -44,10 +43,8 @@ const EditProfile = () => {
       },
       body: image,
     })
-    console.log("image",imageFileName)
     const json = await imageFileName.json()
     const body = JSON.parse(json.body)
-    console.log("body",body)
     const fileName = body.filename
 
     // プロフィール更新内容をdbに登録
@@ -91,17 +88,6 @@ const EditProfile = () => {
       </IconButton>
     </Fragment>
   );
-
-  // const getProfileImage = async () => {
-  //   const fileName = member?.image_file_name
-  //   console.log("file",fileName)
-  //   const url = `${apiGatewayUrl}?file=${fileName}`
-  //   const get = await fetch(url)
-  //   const blob = await get.blob()
-  //   const objectUrl = URL.createObjectURL(blob)
-  //   // setPhoto(objurl)
-  //   setObjeceUrl(objectUrl)
-  // }
 
   return (
     <>

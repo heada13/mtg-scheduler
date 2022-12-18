@@ -1,11 +1,13 @@
 import type { NextPage } from 'next'
-import { Event, Member } from '@prisma/client';
+import { Event, Member } from '@prisma/client'
 import getMonth from 'date-fns/getMonth'
 import styles from '../styles/main.module.scss'
 import { useEffect, useState } from 'react'
+import { useRouter } from "next/router";
 import format from 'date-fns/format'
 import getDate from 'date-fns/getDate'
 import getDay from 'date-fns/getDay'
+import subHours from 'date-fns/subHours'
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import endOfWeek from 'date-fns/endOfWeek'
 import eachWeekOfInterval from 'date-fns/eachWeekOfInterval'
@@ -15,10 +17,10 @@ import startOfMonth from 'date-fns/startOfMonth'
 import endOfMonth from 'date-fns/endOfMonth'
 import EventRegistModal from '../components/eventRegistModal'
 import Button from '@mui/material/Button'
-import { EventTag } from '../components/eventTag';
-import { useAuthContext } from "../lib/authContext";
-import { inputMember } from '../states/eventDetailState'
-import { SetterOrUpdater, useSetRecoilState } from 'recoil';
+import { EventTag } from '../components/eventTag'
+import { useAuthContext } from "../lib/authContext"
+import { inputMember, inputEventDetail, inputEventsByDate } from '../states/state'
+import { SetterOrUpdater, useSetRecoilState, useRecoilState } from 'recoil'
 import { EventWithStoreAndFormat } from '../types/returnType'
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
@@ -44,7 +46,6 @@ const offsetTime = () => {
 }
 
 const Home: NextPage = () => {
-  // const now = new Date(Date.now() + ((new Date().getTimezoneOffset() + (9 * 60)) * 60 * 1000))
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(offsetTime()))
   const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(offsetTime()))
   const [eventByDay, setEventByDay] = useState<EventWithStoreAndFormat[][]>([[]])
@@ -52,6 +53,7 @@ const Home: NextPage = () => {
   const [calendar, setCalendar] = useState(getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth))
   const [open, setOpen] = useState<boolean>(false)
   const { user } = useAuthContext()
+  const router = useRouter();
   const setMember: SetterOrUpdater<Member|null> = useSetRecoilState(inputMember)
   const addMonthsCalendar = async () => {
     const addMonthFirstDay = addMonths(firstDayOfTheMonth,1)
@@ -91,7 +93,8 @@ const Home: NextPage = () => {
       listByDate[i] = []
     }
     events.forEach((el:EventWithStoreAndFormat) => {
-      const eventDate = getDate(new Date(el.event_day))
+      const date = new Date(el.event_day)
+      const eventDate = getDate(subHours(new Date(el.event_day),9))
       listByDate[eventDate].push(el)
     })
     setEventByDay(listByDate)
@@ -105,14 +108,22 @@ const Home: NextPage = () => {
     eventByDateList(events)
   }
   const getMember = async () => {
-    console.log("user",user)
     if (!user) return
     const uid = user.uid
     const response = await fetch(`/api/getMember?uid=${uid}`)
     const member = await response.json()
-    console.log("member",member)
     setMember(member[0])
   }
+
+  // const setEventsByDate = useSetRecoilState(inputEventsByDate)
+  // const setSelected = (list: EventWithStoreAndFormat[]) => setEventsByDate(list)
+  const [eventsByDate, setEventsByDate] = useRecoilState(inputEventsByDate)
+
+  const clickHandler = (date: number) => {
+    setEventsByDate(eventByDay[date])
+    router.push('/calendarEventList')
+  }
+  
   useEffect(() => {
     getEvents(startOfMonth(offsetTime()), endOfMonth(offsetTime()))
   },[]);
@@ -141,7 +152,9 @@ const Home: NextPage = () => {
                         `${styles.sunday_cell} ${styles.cell}` : 
                         getDay(date) === 6 ? `${styles.saturday_cell} ${styles.cell}` : 
                         styles.cell } >
-                        {getDate(date)}
+                        <div onClick={() => clickHandler(getDate(date))}>
+                          {getDate(date)}
+                        </div>
                         {eventByDay[getDate(date)]?.map( event => (
                           getMonth(date) === getMonth(new Date(event.event_day)) &&
                           (<EventTag key={event.id} event={event}></EventTag>)
