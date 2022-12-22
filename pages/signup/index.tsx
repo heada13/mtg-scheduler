@@ -21,7 +21,6 @@ export default function SignUp () {
     const postBody = {
       name:"",
       email:email,
-      pass:password,
       auth_uid:uid
     }
     const post = await fetch('/api/postMember',{

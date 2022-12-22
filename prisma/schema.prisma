@@ -29,7 +29,6 @@ model Member {
   id          Int      @id @default(autoincrement())
   name        String
   email       String
-  pass        String
   auth_uid    String   @default("xxx")
   image_file_name String @default("/")
   event_list  MemberList[]
@@ -63,18 +62,19 @@ model SnsInfo {
 model Store {
   id          Int      @id @default(autoincrement())
   store_name  String
-  prefecture  String
+  prefecture_id  Int
+  prefecture  Prefectures @relation(fields: [prefecture_id], references: [id])
   address     String
+  link        String
   events      Event[]
   created_at  DateTime @default(now()) @db.DateTime(0)
   updated_at  DateTime @default(now()) @db.DateTime(0) @updatedAt
-  delete_flag Int      @default(0)
 }
 
 model Format {
   id                  Int      @id @default(autoincrement())
   format_name         String
-  english_format_name String   @default("Standard")
+  english_format_name String
   events              Event[]
   created_at          DateTime @default(now()) @db.DateTime(0)
   updated_at          DateTime @default(now()) @db.DateTime(0) @updatedAt
@@ -85,6 +85,15 @@ model EventCategory {
   id                  Int      @id @default(autoincrement())
   category_name       String
   events              Event[]
+  created_at          DateTime @default(now()) @db.DateTime(0)
+  updated_at          DateTime @default(now()) @db.DateTime(0) @updatedAt
+}
+
+model Prefectures {
+  id                  Int      @id @default(autoincrement())
+  prefecture_name     String
+  english_prefecture_name String
+  stores              Store[]
   created_at          DateTime @default(now()) @db.DateTime(0)
   updated_at          DateTime @default(now()) @db.DateTime(0) @updatedAt
 }
