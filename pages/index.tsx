@@ -127,7 +127,15 @@ const Home: NextPage = () => {
     router.push('/calendarEventList')
   }
   
-  const today = getDate(new Date())
+  const determineToday = (_date: any) => {
+    const argMonth = getMonth(_date)
+    const argDate = getDate(_date)
+    const today = new Date()
+    const month = getMonth(today)
+    const date = getDate(today)
+    if( argMonth === month && argDate === date) return true
+    return false
+  }
 
   useEffect(() => {
     getEvents(startOfMonth(offsetTime()), endOfMonth(offsetTime()))
@@ -168,7 +176,7 @@ const Home: NextPage = () => {
                   <tr key={rowNum}>
                     {weekRow.map(date => (
                       <td key={getDay(date)} className={styles.cell} >
-                        <div onClick={() => clickHandler(getDate(date))} className={getDate(date) === today ? `${styles.today}` : ''}>
+                        <div onClick={() => clickHandler(getDate(date))} className={determineToday(date) ? `${styles.today}` : ''}>
                           {getDate(date)}
                         </div>
                         <div className={styles.calendar_event}>
