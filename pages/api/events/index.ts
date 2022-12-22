@@ -1,5 +1,5 @@
 // import { Event } from '@prisma/client';
-import { EventWithStoreAndFormat } from '../../../types/returnType'
+import { EventWithStoreAndFormat } from '../../../types/types'
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { PrismaClient, Prisma } from '@prisma/client';

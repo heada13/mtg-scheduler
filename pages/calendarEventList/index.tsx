@@ -4,7 +4,7 @@ import Paper from '@mui/material/Paper';
 import { useRecoilState, useRecoilValue } from "recoil";
 import { inputEventsByDate } from "../../states/state";
 import styles from '../../styles/main.module.scss'
-import { EventWithStoreAndFormat } from "../../types/returnType";
+import { EventWithStoreAndFormat } from "../../types/types";
 import { useRouter } from "next/router";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 

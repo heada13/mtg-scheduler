@@ -21,7 +21,10 @@ import { EventTag } from '../components/eventTag'
 import { useAuthContext } from "../lib/authContext"
 import { inputMember, inputEventDetail, inputEventsByDate } from '../states/state'
 import { SetterOrUpdater, useSetRecoilState, useRecoilState } from 'recoil'
-import { EventWithStoreAndFormat } from '../types/returnType'
+import { EventWithStoreAndFormat } from '../types/types'
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { StayCurrentLandscapeSharp } from '@mui/icons-material'
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -124,6 +127,8 @@ const Home: NextPage = () => {
     router.push('/calendarEventList')
   }
   
+  const today = getDate(new Date())
+
   useEffect(() => {
     getEvents(startOfMonth(offsetTime()), endOfMonth(offsetTime()))
   },[]);
@@ -137,7 +142,21 @@ const Home: NextPage = () => {
         {/* <Header /> */}
         <main className={styles.main}>
           <div className={styles.calendar_main}>
-            {format(firstDayOfTheMonth, 'y年M月')}
+            <div className={styles.calendar_header}>
+              <h1>
+                {format(firstDayOfTheMonth, 'y年M月')}
+              </h1>
+              <div className={styles.calendar_menu}>
+                {/* <div> */}
+                  <Button onClick={() => subMonthsCalendar() } variant="contained" className={`${styles.calendar_menu_button}`}><KeyboardArrowLeftIcon/></Button>
+                  <Button onClick={() => currnetMonthsCalendar()} variant="contained" className={`${styles.calendar_menu_button} ${styles.calendar_menu_button_center}`}>今日</Button>
+                  <Button onClick={() => addMonthsCalendar()} variant="contained" className={`${styles.calendar_menu_button}`}><KeyboardArrowRightIcon/></Button>
+                {/* </div> */}
+                {/* <div>
+                  <button onClick={() => setShow(true)}>新規作成</button>
+                </div> */}
+              </div>
+            </div>
             <table className={styles.calendar_container}>
               <thead>
                 <tr>
@@ -148,33 +167,22 @@ const Home: NextPage = () => {
                 {calendar.map((weekRow, rowNum) => (
                   <tr key={rowNum}>
                     {weekRow.map(date => (
-                      <td key={getDay(date)} className={getDay(date) === 0 ? 
-                        `${styles.sunday_cell} ${styles.cell}` : 
-                        getDay(date) === 6 ? `${styles.saturday_cell} ${styles.cell}` : 
-                        styles.cell } >
-                        <div onClick={() => clickHandler(getDate(date))}>
+                      <td key={getDay(date)} className={styles.cell} >
+                        <div onClick={() => clickHandler(getDate(date))} className={getDate(date) === today ? `${styles.today}` : ''}>
                           {getDate(date)}
                         </div>
+                        <div className={styles.calendar_event}>
                         {eventByDay[getDate(date)]?.map( event => (
                           getMonth(date) === getMonth(new Date(event.event_day)) &&
                           (<EventTag key={event.id} event={event}></EventTag>)
                           ))}
+                        </div>
                         </td>
                     ))}
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-          <div className={styles.calendar_menu}>
-            <div>
-              <Button onClick={() => subMonthsCalendar() } variant="contained">前の月</Button>
-              <Button onClick={() => currnetMonthsCalendar()} variant="contained">今月</Button>
-              <Button onClick={() => addMonthsCalendar()} variant="contained">次の月</Button>
-            </div>
-            <div>
-              <button onClick={() => setShow(true)}>新規作成</button>
-            </div>
           </div>
         </main>
       </div>

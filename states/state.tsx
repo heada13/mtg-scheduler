@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 import { Event, Member } from '@prisma/client';
 import { recoilPersist } from "recoil-persist";
-import { EventWithStoreAndFormat } from '../types/returnType'
+import { EventWithStoreAndFormat } from '../types/types'
 
 const { persistAtom } = recoilPersist({
   key: "recoil-persist",

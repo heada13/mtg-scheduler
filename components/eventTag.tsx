@@ -4,7 +4,7 @@ import { Event } from '@prisma/client';
 import { useRouter } from "next/router";
 import { inputEventDetail } from '../states/state'
 import { SetterOrUpdater, useSetRecoilState } from 'recoil';
-import { EventWithStoreAndFormat } from '../types/returnType'
+import { EventWithStoreAndFormat } from '../types/types'
 
 // interface Props extends Event {
 //   event: Event,
@@ -48,14 +48,16 @@ export const EventTag = ({event}: Props) => {
 
   return (
     <>
-      {/* <Link href={{pathname:'event', query: query}}> */}
-        <div 
-          className={styles.event_tag_container} 
-          style={{backgroundColor:backgroundColor}}
+      <div className={styles.event_tag_container}>
+        <div className={styles.event_tag_format_color}           
+            style={{backgroundColor:backgroundColor}}>
+        </div>
+        <span 
+          className={styles.event_tag_text} 
           onClick={pushEventPage}>
           {event.event_name}
-        </div>
-      {/* </Link> */}
+        </span>
+      </div>
     </>
   )
 }

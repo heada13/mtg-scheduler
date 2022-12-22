@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import styles from '../../styles/main.module.scss'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { tagColor } from '../../const/tagColor'
-import { EventWithStoreAndFormat } from '../../types/returnType'
+import { EventWithStoreAndFormat } from '../../types/types'
 import { UnregisterDialog } from '../../components/unregisterDialog'
 import { RegisterDialog } from '../../components/registerDialog'
 import { Box } from "@mui/system";
