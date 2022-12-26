@@ -165,7 +165,14 @@
 }
 
 .profile_image {
+  width: 200px;
+  height: 200px;
+  border-radius: 5px;
   margin-bottom: 20px;
+}
+
+.reset_profile_button {
+  margin-top: 20px;
 }
 
 .user_name {
@@ -178,6 +185,7 @@
   margin-top: 100px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .edit_profile_blank_img {
@@ -185,12 +193,23 @@
   width: 200px;
   height: 200px;
   background-color: gray;
-  border-radius: 10%;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px; 
+  cursor: pointer;
 }
 
 .edit_profile_uploaded_img {
   width: 200px;
   height: 200px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.edit_profile_user_name {
+  margin-bottom: 30px;
 }
 
 .event_detail_container {

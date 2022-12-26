@@ -17,7 +17,6 @@ export default async function handler(
 ) {
   const query= req.query;
   const {first, last} = query
-  console.log("query",query)
   // async function getEventWithStoreAndFormat() {
     const events = await prisma.event.findMany(
       {

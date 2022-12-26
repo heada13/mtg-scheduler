@@ -7,16 +7,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const update = req.body;
-  console.log("req", update)
+  const data = req.body;
+  const { id } = req.query
+  const intId = Number(id)
   const updateMember = await prisma.member.update({
       where: {
-        id: update.id
+        id: intId
       },
-      data: {
-        name: update.name,
-        image_file_name: update.image_file_name
-      }
+      data: data
     }
   );
   console.log("update",updateMember)

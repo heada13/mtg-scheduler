@@ -9,10 +9,6 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const body = req.body
-  // const { member, event } = body
-  // const castedMember = Number(member)
-  // const castedEvent = Number(event)
-  // console.log("query",uid)
   const unregister = await prisma.memberList.deleteMany({
     where: body
   })
