@@ -11,7 +11,6 @@ import { tagColor } from '../../const/tagColor'
 import { EventWithStoreAndFormat } from '../../types/types'
 import { UnregisterDialog } from '../../components/unregisterDialog'
 import { RegisterDialog } from '../../components/registerDialog'
-import { Box } from "@mui/system";
 
 export default function EventDetail(){
   const formatTagColor = { tagColor }
@@ -26,18 +25,15 @@ export default function EventDetail(){
   const eventDetailState = useRecoilValue(inputEventDetail)!
   const memberState = useRecoilValue(inputMember)
   useEffect(() => {
-    // console.log("event page", query)
-    // if(eventDetailState) {
       getRegistState()
       getMemberList()
       setEvent(eventDetailState)
-    // }
       const formatId = eventDetailState!.event_format
       setBgColor(formatTagColor.tagColor[formatId])
   },[])
   const getRegistState = async () => {
     const postData = {
-      event_id: eventData?.id,
+      event_id: eventDetailState?.id,
       member_id: memberState?.id
     }
     const response = await fetch('/api/getRegisterState', {
@@ -55,19 +51,17 @@ export default function EventDetail(){
     }
   }
   const getMemberList = async () => {
-    const id = eventData?.id
+    const id = eventDetailState?.id
     const response = await fetch(`/api/getMemberList?event_id=${id}`)
     const memberList = await response.json()
-    console.log("list",memberList)
     setMembersList(memberList)
   }
 
   const postMemberList = async () => {
     const postData = {
-      event_id: eventData?.id,
+      event_id: eventDetailState?.id,
       member_id: memberState?.id
     }
-    console.log("member",memberState)
     const post = await fetch('/api/postMemberList', {
       method: "POST",
       body: JSON.stringify(postData),
@@ -84,7 +78,7 @@ export default function EventDetail(){
   }
   const deleteMemberList = async () => {
     const postData = {
-      event_id: eventData?.id,
+      event_id: eventDetailState?.id,
       member_id: memberState?.id
     }
     console.log("member",postData)

@@ -39,10 +39,11 @@ export const EventTag = ({event}: Props) => {
   const backgroundColor = backgroundColorType[formatId]
   // const query = JSON.stringify(event)
   const router = useRouter();
-  const setEventDetailState: SetterOrUpdater<EventWithStoreAndFormat|null> = useSetRecoilState(inputEventDetail)
+  const setEventDetail: SetterOrUpdater<EventWithStoreAndFormat|null> = useSetRecoilState(inputEventDetail)
   
   const pushEventPage = () => {
-    setEventDetailState(event)
+    console.log("event",event)
+    setEventDetail(event)
     router.push('/eventDetail')
   }
 

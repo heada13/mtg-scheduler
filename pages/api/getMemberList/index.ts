@@ -9,14 +9,14 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const query = req.query
-  const { id } = query
-  // console.log("query",uid)
+  const { event_id } = query
+  const intId = Number(event_id)
   const memberList = await prisma.memberList.findMany({
     select: {
       member_id: true
     },
     where: {
-      event_id: id as unknown as number
+      event_id: intId
     }
   })
   const memberIdList = memberList.map((el) => ({'id': el.member_id}) )
@@ -26,6 +26,5 @@ export default async function handler(
       OR: memberIdList
     }
   })
-  console.log("info", membersInfo)
   res.status(200).json(membersInfo);
 }
