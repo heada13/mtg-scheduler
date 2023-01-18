@@ -24,7 +24,9 @@ import { SetterOrUpdater, useSetRecoilState, useRecoilState } from 'recoil'
 import { EventWithStoreAndFormat } from '../types/types'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { StayCurrentLandscapeSharp } from '@mui/icons-material'
+// import { StayCurrentLandscapeSharp } from '@mui/icons-material'
+import { Drawer, Toolbar } from '@mui/material'
+import { styled } from '@mui/material/styles';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
   const sundays = eachWeekOfInterval({
@@ -48,6 +50,27 @@ const offsetTime = () => {
   return now
 }
 
+const drawerWidth = 240;
+
+const Main = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })<{
+  open?: boolean;
+}>(({ theme, open }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
+  transition: theme.transitions.create('margin', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  // marginLeft: `-${drawerWidth}px`,
+  ...(open && {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    marginLeft: `${drawerWidth}px`,
+  }),
+}));
+
 const Home: NextPage = () => {
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(offsetTime()))
   const [lastDayOfTheMonth, setlastDay] = useState(endOfMonth(offsetTime()))
@@ -55,6 +78,7 @@ const Home: NextPage = () => {
   const [show, setShow] = useState(false)
   const [calendar, setCalendar] = useState(getCalendarArray(firstDayOfTheMonth, lastDayOfTheMonth))
   const [open, setOpen] = useState<boolean>(false)
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
   const { user } = useAuthContext()
   const router = useRouter();
   const setMember: SetterOrUpdater<Member|null> = useSetRecoilState(inputMember)
@@ -86,7 +110,10 @@ const Home: NextPage = () => {
     await getEvents(currentMonthFirstDay, currentMonthLastDay)
   }
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setDrawerOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
   };
   const eventByDateList = (events:EventWithStoreAndFormat[]) => {
     // 31日分の空のデータを生成
@@ -147,9 +174,24 @@ const Home: NextPage = () => {
     <>
       <EventRegistModal show={show} setShow={setShow}/>
       <div>
-        {/* <Header /> */}
-        <main className={styles.main}>
-          <div className={styles.calendar_main}>
+¥        <main className={styles.main}>
+          <Main className={styles.calendar_main} open={drawerOpen}>
+          <Drawer
+            open={drawerOpen}
+            anchor={"left"}
+            variant="persistent"
+            sx={{
+              width: drawerWidth,
+              flexShrink: 0,
+              [`& .MuiDrawer-paper`]: { boxSizing: 'border-box',width: drawerWidth, },
+            }}
+          >
+            <Toolbar/>
+            ドロワー
+            <Button onClick={handleDrawerClose}></Button>
+          </Drawer>
+          <Button onClick={handleDrawerOpen}>ドロワー</Button>
+            {/* <Main open={drawerOpen}> */}
             <div className={styles.calendar_header}>
               <h1>
                 {format(firstDayOfTheMonth, 'y年M月')}
@@ -191,7 +233,7 @@ const Home: NextPage = () => {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Main>
         </main>
       </div>
     </>
