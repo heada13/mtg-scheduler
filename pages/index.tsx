@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { Event, Member } from '@prisma/client'
+import { Event, Member, Format } from '@prisma/client'
 import getMonth from 'date-fns/getMonth'
 import styles from '../styles/main.module.scss'
 import { useEffect, useState } from 'react'
@@ -25,7 +25,7 @@ import { EventWithStoreAndFormat } from '../types/types'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 // import { StayCurrentLandscapeSharp } from '@mui/icons-material'
-import { Drawer, Toolbar } from '@mui/material'
+import { Autocomplete, Drawer, TextField, Toolbar } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
@@ -81,6 +81,7 @@ const Home: NextPage = () => {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
   const { user } = useAuthContext()
   const router = useRouter();
+  let allEvents;
   const setMember: SetterOrUpdater<Member|null> = useSetRecoilState(inputMember)
   const addMonthsCalendar = async () => {
     const addMonthFirstDay = addMonths(firstDayOfTheMonth,1)
@@ -135,14 +136,30 @@ const Home: NextPage = () => {
     const formatlastDate = formatDate(lastDate)
     const response = await fetch(`/api/events?first=${formatfirstDate}&last=${formatlastDate}`)
     const events = await response.json()
+    allEvents = events
     eventByDateList(events)
   }
+
+  // ユーザー情報取得
   const getMember = async () => {
     if (!user) return
     const uid = user.uid
     const response = await fetch(`/api/getMember?uid=${uid}`)
     const member = await response.json()
     setMember(member[0])
+  }
+
+  // フォーマットリスト取得
+  const [fomarts, setFormats] = useState([])
+  const getFormats = async () => {
+    const response = await fetch("/api/formats")
+    const formatsList = await response.json()
+    setFormats(formatsList)
+  }
+
+  const fomartStringList = (list:Format[]) => {
+    const stringList = list.map((el) => el.format_name)
+    return stringList
   }
 
   // const setEventsByDate = useSetRecoilState(inputEventsByDate)
@@ -166,6 +183,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     getEvents(startOfMonth(offsetTime()), endOfMonth(offsetTime()))
+    getFormats()
   },[]);
   useEffect(() => {
     getMember()
@@ -174,7 +192,7 @@ const Home: NextPage = () => {
     <>
       <EventRegistModal show={show} setShow={setShow}/>
       <div>
-¥        <main className={styles.main}>
+        <main className={styles.main}>
           <Main className={styles.calendar_main} open={drawerOpen}>
           <Drawer
             open={drawerOpen}
@@ -187,8 +205,19 @@ const Home: NextPage = () => {
             }}
           >
             <Toolbar/>
-            ドロワー
-            <Button onClick={handleDrawerClose}></Button>
+            <Button onClick={handleDrawerClose}>閉じる</Button>
+            <Autocomplete
+              multiple
+              id="tags-outlined"
+              options={fomartStringList(fomarts)}
+              filterSelectedOptions
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="フォーマット"
+                />
+              )}
+            />
           </Drawer>
           <Button onClick={handleDrawerOpen}>ドロワー</Button>
             {/* <Main open={drawerOpen}> */}
