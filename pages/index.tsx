@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import { Event, Member, Format } from '@prisma/client'
 import getMonth from 'date-fns/getMonth'
 import styles from '../styles/main.module.scss'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter } from "next/router";
 import format from 'date-fns/format'
 import getDate from 'date-fns/getDate'
@@ -25,7 +25,7 @@ import { EventWithStoreAndFormat } from '../types/types'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 // import { StayCurrentLandscapeSharp } from '@mui/icons-material'
-import { Autocomplete, Drawer, TextField, Toolbar } from '@mui/material'
+import { Autocomplete, Chip, Drawer, TextField, Toolbar } from '@mui/material'
 import { styled } from '@mui/material/styles';
 
 const getCalendarArray = (firstDate: Date, lastDate: Date) => {
@@ -70,6 +70,47 @@ const Main = styled('div', { shouldForwardProp: (prop) => prop !== 'open' })<{
     marginLeft: `${drawerWidth}px`,
   }),
 }));
+
+
+const AutocompleteBox = () => {
+  const [selectedFormats, setSelectedFormats] = useState<Format[]>([])
+  const [formatData, setFormatData] = useState<Format[]>([])
+  
+  useEffect(() => {
+    const getFormatsList = async () => {
+      const response = await fetch("/api/formats")
+      const json = await response.json()
+      setFormatData(json)
+      const initialFormat = json.filter((format:Format) => format.format_name === "スタンダード")
+      if(initialFormat.length) {
+        setSelectedFormats(initialFormat)
+      }
+    }
+    getFormatsList()
+  },[])
+
+  return (
+    <>
+      <Autocomplete
+        multiple
+        id="tags-outlined"
+        value={selectedFormats}
+        options={formatData}
+        getOptionLabel={(option) => option.format_name}
+        filterSelectedOptions
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="フォーマット"
+          />
+        )}
+        onChange={(event,item)=> {
+          setSelectedFormats(item)
+        }}
+      />
+    </>
+  )
+}
 
 const Home: NextPage = () => {
   const [firstDayOfTheMonth, setFirstDay] = useState(startOfMonth(offsetTime()))
@@ -150,18 +191,15 @@ const Home: NextPage = () => {
   }
 
   // フォーマットリスト取得
-  const [fomarts, setFormats] = useState([])
+  const [formats, setFormats] = useState<Format[]>([])
   const getFormats = async () => {
     const response = await fetch("/api/formats")
     const formatsList = await response.json()
     setFormats(formatsList)
   }
+  // const [selectedFormats, setSelectedFormats] = useState<Format[]>([])
 
-  const fomartStringList = (list:Format[]) => {
-    const stringList = list.map((el) => el.format_name)
-    return stringList
-  }
-
+  const [loading, setLoading] = useState(true);
   // const setEventsByDate = useSetRecoilState(inputEventsByDate)
   // const setSelected = (list: EventWithStoreAndFormat[]) => setEventsByDate(list)
   const [eventsByDate, setEventsByDate] = useRecoilState(inputEventsByDate)
@@ -206,18 +244,9 @@ const Home: NextPage = () => {
           >
             <Toolbar/>
             <Button onClick={handleDrawerClose}>閉じる</Button>
-            <Autocomplete
-              multiple
-              id="tags-outlined"
-              options={fomartStringList(fomarts)}
-              filterSelectedOptions
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="フォーマット"
-                />
-              )}
-            />
+            <Suspense fallback={<p>Loading...</p>}>
+              <AutocompleteBox />
+            </Suspense>
           </Drawer>
           <Button onClick={handleDrawerOpen}>ドロワー</Button>
             {/* <Main open={drawerOpen}> */}
